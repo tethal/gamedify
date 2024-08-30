@@ -7,10 +7,10 @@
                 <li><strong>{{ quiz_name }}</strong></li>
             </ul>
         </nav>
-        <div hx-ext="ws" ws-connect="/play/ws/{{ room_code }}/{{ connection_id }}">
+        <div hx-ext="ws" ws-connect="/play/ws/{{ connection_id }}">
             <div id="game_content">
                 <article>
-                    <span aria-busy="true">čekej, probíhá připojování k místnosti</span>
+                    <span aria-busy="true">čekej, probíhá připojování</span>
                 </article>
             </div>
         </div>

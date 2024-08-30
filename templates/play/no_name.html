@@ -1,6 +1,6 @@
 <div id="game_content">
     <article>
-        <form hx-put="/play/{{ room.code }}/{{ connection_id }}/set_name" hx-target="#game_content" hx-swap="outerHTML">
+        <form ws-send hx-vals='{"action": "set_name"}'>
             <label>
                 Zadej svou přezdívku:
                 <input type="text" name="player_name" placeholder="jméno" required/>

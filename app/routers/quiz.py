@@ -1,10 +1,12 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
-from sqlmodel import select
+from sqlmodel import Session, select
 
-from app.classroom import find_room_by_code
-from app.dependencies import get_db, templates
-from app.model import Quiz
+from app.dependencies import get_db, get_event_bus, templates
+from app.model import Player, Quiz
+from app.util import EventBus
 
 router = APIRouter(prefix="/quiz")
 
@@ -17,7 +19,14 @@ async def quiz_list(request: Request, db=Depends(get_db)):
 
 
 @router.post("/", response_class=HTMLResponse)
-async def reject_name(request: Request, db=Depends(get_db)):
-    for p in find_room_by_code("123-456").players.values():
-        p.reject_name()
+async def reject_name(request: Request,
+                      db: Annotated[Session, Depends(get_db)],
+                      event_bus: Annotated[EventBus, Depends(get_event_bus)]):
+    players = db.exec(select(Player)).all()
+    for p in players:
+        p.name = None
+        db.add(p)
+    db.commit()
+    for p in players:
+        event_bus.notify(p.id)
     return await quiz_list(request, db)
