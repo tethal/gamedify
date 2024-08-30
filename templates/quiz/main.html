@@ -6,16 +6,15 @@
         <article>
             <header>Seznam kvízů</header>
             <ul>
-                {% for quiz in quizzes %}
-                    <li>{{ quiz.id }} - {{ quiz.name }}</li>
+                {% for quiz, room in quizzes_and_rooms %}
+                    <li>
+                        {{ quiz.name }}
+                        {% if room %}
+                            - <a href="{{ url_for('room_root', room_code=room.code) }}">otevřená místnost</a>
+                        {% endif %}
+                    </li>
                 {% endfor %}
             </ul>
-        </article>
-        <article>
-            <header>DEBUG</header>
-            <form method="POST">
-                <input type="submit" value="Reject all player names"/>
-            </form>
         </article>
     </div>
 {% endblock %}

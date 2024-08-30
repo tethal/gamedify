@@ -2,31 +2,21 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
-from sqlmodel import Session, select
+from sqlmodel import Session, and_, or_, select
 
-from app.dependencies import get_db, get_event_bus, templates
-from app.model import Player, Quiz
-from app.util import EventBus
+from app.dependencies import current_user, get_db, templates
+from app.model import Quiz, Room, User
 
 router = APIRouter(prefix="/quiz")
 
 
 @router.get("/", response_class=HTMLResponse)
-async def quiz_list(request: Request, db=Depends(get_db)):
-    quizzes = db.exec(select(Quiz)).all()
-    context = {"request": request, "quizzes": quizzes}
+async def quiz_root(request: Request,
+                    db: Annotated[Session, Depends(get_db)],
+                    user: Annotated[User, Depends(current_user)]):
+    quizzes = (db.exec(select(Quiz, Room)
+                       .join(Room, isouter=True, onclause=and_(Room.quiz_id == Quiz.id, Room.owner == user))
+                       .where(or_(Quiz.is_public == True, Quiz.owner == user)))
+               .all())
+    context = {"request": request, "quizzes_and_rooms": quizzes}
     return templates.TemplateResponse("quiz/main.html", context)
-
-
-@router.post("/", response_class=HTMLResponse)
-async def reject_name(request: Request,
-                      db: Annotated[Session, Depends(get_db)],
-                      event_bus: Annotated[EventBus, Depends(get_event_bus)]):
-    players = db.exec(select(Player)).all()
-    for p in players:
-        p.name = None
-        db.add(p)
-    db.commit()
-    for p in players:
-        event_bus.notify(p.id)
-    return await quiz_list(request, db)

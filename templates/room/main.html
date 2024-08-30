@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container">
+        <h1>Gamedify</h1>
+        <article>
+            <header>Místnost {{ room.code }}</header>
+            <p>Kvíz: {{ room.quiz.name }}<p>
+            <p>Vytvořena uživatelem: {{ room.owner.username }}</p>
+            <p>Odkaz pro hráče: {{ url_for('play_root', room_code=room.code) }}</p>
+        </article>
+        <div hx-ext="ws" ws-connect="/room/ws/{{ room.code }}">
+            <div id="room_content">
+                <article>
+                    <span aria-busy="true">čekej, probíhá připojování</span>
+                </article>
+            </div>
+        </div>
+    </div>
+{% endblock %}

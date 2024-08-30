@@ -6,7 +6,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from .dependencies import engine, templates
 from .model import create_db
-from .routers import play, quiz, root
+from .routers import play, quiz, room, root
 
 
 @asynccontextmanager
@@ -18,6 +18,7 @@ async def lifespan(_: FastAPI):
 app = FastAPI(lifespan=lifespan, docs_url=None, redoc_url=None)
 app.include_router(play.router)
 app.include_router(quiz.router)
+app.include_router(room.router)
 app.include_router(root.router)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 

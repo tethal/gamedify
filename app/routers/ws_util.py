@@ -62,8 +62,7 @@ class WsHandler:
         with self.ctrl_factory() as ctrl:
             try:
                 topic = await self.on_connect(ctrl)
-            except Exception as exc:
-                await self.on_error(ctrl, exc)
+            except:
                 await self.websocket.close()
                 return
 

@@ -1,6 +1,6 @@
 import contextlib
 import uuid
-from typing import Annotated, ContextManager
+from typing import Annotated, ContextManager, Sequence
 
 from fastapi import Depends
 from sqlmodel import Session, select
@@ -40,14 +40,26 @@ class Controller:
         pc.active = active
         self.db.add(pc)
         self.db.commit()
-        # TODO self.event_bus.notify(pc.room.code)
+        self.event_bus.notify(pc.room.code)
         return pc
 
-    def set_player_name(self, player: Player, name: str):
+    def set_player_name(self, room: Room, player: Player, name: str | None):
         player.name = name
         self.db.add(player)
         self.db.commit()
         self.event_bus.notify(player.id)
+        self.event_bus.notify(room.code)
+
+    def get_player(self, player_id: uuid.UUID) -> Player:
+        return self.db.exec(select(Player).where(Player.id == player_id)).one()
+
+    def get_room(self, room_code: str) -> Room:
+        return self.db.exec(select(Room).where(Room.code == room_code)).one()
+
+    def get_room_players(self, room_code: str) -> Sequence[Player]:
+        return self.db.exec(
+            select(Player).join(PlayerConnection).where(PlayerConnection.room_code == room_code,
+                                                        PlayerConnection.active).distinct()).all()
 
 
 class ControllerFactory:

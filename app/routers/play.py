@@ -68,7 +68,7 @@ class PlayerWsHandler(WsHandler):
     async def on_receive(self, ctrl: Controller, msg):
         pc = ctrl.get_player_connection(self.connection_id)
         if msg['action'] == 'set_name':
-            ctrl.set_player_name(pc.player, msg['player_name'])
+            ctrl.set_player_name(pc.room, pc.player, msg['player_name'])
 
 
 @router.websocket("/ws/{connection_id}")
