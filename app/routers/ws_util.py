@@ -5,8 +5,7 @@ from typing import Annotated
 
 from fastapi import Depends, WebSocket, WebSocketDisconnect
 
-from app.ctrl import Controller, ControllerFactory
-from app.dependencies import get_event_bus
+from app.dependencies import Controller, ControllerFactory, get_event_bus
 from app.util import EventBus
 
 

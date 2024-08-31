@@ -1,21 +1,41 @@
-import contextlib
 import uuid
-from typing import Annotated, ContextManager, Sequence
+from datetime import datetime, timedelta
+from typing import Sequence
 
-from fastapi import Depends
+import bcrypt
 from sqlmodel import Session, select
 
-from app.dependencies import DbFactory, get_db, get_event_bus
-from app.model import Player, PlayerConnection, Room
+from app.model import Player, PlayerConnection, Room, User, UserSession
 from app.util import EventBus
 
 
-class Controller:
-    def __init__(self,
-                 db: Annotated[Session, Depends(get_db)],
-                 event_bus: Annotated[EventBus, Depends(get_event_bus)]):
+class ControllerImpl:
+    def __init__(self, db: Session, event_bus: EventBus):
         self.db = db
         self.event_bus = event_bus
+
+    def login(self, username: str, password: str) -> UserSession | None:
+        user = self.db.exec(select(User).where(User.username == username)).one_or_none()
+        if not user:
+            return None
+        if not bcrypt.checkpw(password.encode(), user.hashed_password.encode()):
+            return None
+        session = UserSession(user_id=user.id, expires_at=datetime.now() + timedelta(days=3))
+        self.db.add(session)
+        self.db.commit()
+        return session
+
+    def logout(self, session_id: uuid.UUID):
+        session = self.db.exec(select(UserSession).where(UserSession.id == session_id)).one_or_none()
+        if session:
+            self.db.delete(session)
+            self.db.commit()
+
+    def get_user_for_session(self, session_id: uuid.UUID) -> User | None:
+        session = self.db.exec(select(UserSession).where(UserSession.id == session_id)).one_or_none()
+        if not session or session.expires_at < datetime.now():
+            return None
+        return session.user
 
     def is_room_code_valid(self, code: str) -> bool:
         return self.db.get(Room, code) is not None
@@ -60,16 +80,3 @@ class Controller:
         return self.db.exec(
             select(Player).join(PlayerConnection).where(PlayerConnection.room_code == room_code,
                                                         PlayerConnection.active).distinct()).all()
-
-
-class ControllerFactory:
-    def __init__(self,
-                 db_factory: Annotated[DbFactory, Depends()],
-                 event_bus: Annotated[EventBus, Depends(get_event_bus)]):
-        self.db_factory = db_factory
-        self.event_bus = event_bus
-
-    @contextlib.contextmanager
-    def __call__(self) -> ContextManager[Controller]:
-        with self.db_factory() as db:
-            yield Controller(db, self.event_bus)

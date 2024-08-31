@@ -43,6 +43,10 @@ class Room:
 @pytest.fixture
 def room(context: BrowserContext) -> Room:
     page = context.new_page()
+    page.goto("/login")
+    page.fill("input[name=username]", "admin")
+    page.fill("input[name=password]", "heslo")
+    page.get_by_role("button", name="Přihlásit se").click()
     page.goto("/room/123-456")
     return Room(page)
 

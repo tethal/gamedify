@@ -2,7 +2,7 @@
 
 {% block content %}
     <div class="container">
-        <h1>Gamedify</h1>
+        {% include 'header.html' %}
         <article>
             <header>Místnost {{ room.code }}</header>
             <p>Kvíz: {{ room.quiz.name }}<p>

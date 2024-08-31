@@ -1,12 +1,11 @@
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Request, WebSocket
+from fastapi import APIRouter, Depends, HTTPException, Request, WebSocket, status
 from fastapi.responses import HTMLResponse
 from sqlmodel import Session, select
 
-from app.ctrl import Controller, ControllerFactory
-from app.dependencies import current_user, get_db, get_event_bus, jinja_env, templates
+from app.dependencies import Controller, ControllerFactory, current_user, get_db, get_event_bus, jinja_env, templates
 from app.model import Room, User
 from app.routers.ws_util import WsHandler
 from app.util import EventBus
@@ -34,11 +33,12 @@ class RoomWsHandler(WsHandler):
         self.room_code = room_code
 
     async def on_connect(self, ctrl: Controller) -> str:
-        user = current_user(ctrl.db)
-        room = ctrl.get_room(self.room_code)
-        if room.owner != user:
-            raise Exception("Not the owner of the room")
-        return self.room_code
+        if session_id := self.websocket.cookies.get('session_id'):
+            if user := ctrl.get_user_for_session(uuid.UUID(session_id)):
+                room = ctrl.get_room(self.room_code)
+                if room.owner == user:
+                    return self.room_code
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
     async def on_disconnect(self, ctrl: Controller):
         pass

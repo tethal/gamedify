@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 
 from sqlalchemy import text
 from sqlmodel import Field, Relationship, SQLModel, select
@@ -7,8 +8,15 @@ from sqlmodel import Session
 
 class User(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    username: str
+    username: str = Field(unique=True, index=True)
     hashed_password: str
+
+
+class UserSession(SQLModel, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    user_id: uuid.UUID = Field(foreign_key="user.id", ondelete="CASCADE")
+    user: User = Relationship()
+    expires_at: datetime
 
 
 class Quiz(SQLModel, table=True):
@@ -61,7 +69,8 @@ def create_db(engine):
     with Session(engine) as session:
         admin = session.exec(select(User).where(User.username == "admin")).first()
         if not admin:
-            admin = User(username="admin", hashed_password="admin")
+            admin = User(username="admin",
+                         hashed_password="$2b$12$VwxFLsSrDOZEQs3HXqHQzOv7rRhJEG4jHFxOd7UGFjSiuDFRyQvEK")
             session.add(admin)
             session.commit()
         if not session.exec(select(Quiz)).all():

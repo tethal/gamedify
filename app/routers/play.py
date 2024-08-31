@@ -4,8 +4,7 @@ from typing import Annotated
 from fastapi import APIRouter, Cookie, Depends, Request, WebSocket
 from fastapi.responses import HTMLResponse
 
-from app.ctrl import Controller, ControllerFactory
-from app.dependencies import get_event_bus, jinja_env, templates
+from app.dependencies import Controller, ControllerFactory, get_event_bus, jinja_env, templates
 from app.routers.ws_util import WsHandler
 from app.util import EventBus
 

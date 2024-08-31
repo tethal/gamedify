@@ -3,8 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Form, Request, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 
-from app.ctrl import Controller
-from app.dependencies import templates
+from app.dependencies import Controller, templates
 
 router = APIRouter()
 
