@@ -1,0 +1,14 @@
+<div id="room_content">
+    <article>
+        <header>Připojení hráči</header>
+        {% for player in players %}
+            <p>
+            {% if not player.name %}
+                (jméno nezadáno)
+            {% else %}
+                {{ player.name }} -
+                <a href="#" ws-send hx-vals='{"action": "reject_name", "player_id": "{{ player.id }}"}'>reject name</a>
+            {% endif %}
+        {% endfor %}
+    </article>
+</div>

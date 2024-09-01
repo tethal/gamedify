@@ -7,14 +7,15 @@
                 <li><strong>Gamedify</strong></li>
             </ul>
             <ul>
-                <li><a href="{{ url_for('quiz_list') }}">Přihlásit</a></li>
+                <li><a href="{{ url_for('login_form') }}">Přihlásit se</a></li>
             </ul>
         </nav>
         <article>
             <form action="/" method="POST">
                 <label>
                     Kód místnosti:
-                    <input type="text" name="code" placeholder="123-456" value="{{ value }}" required/>
+                    <input type="text" name="code" placeholder="123-456" value="{{ value|e }}"
+                           required aria-invalid="{{ invalid_code|string|lower }}"/>
                     {% if invalid_code %}
                         <small style="color:#e04040">Neplatný kód</small>
                     {% endif %}
