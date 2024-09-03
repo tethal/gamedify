@@ -15,17 +15,21 @@ class User(SQLModel, table=True):
 class UserSession(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     user_id: uuid.UUID = Field(foreign_key="user.id", ondelete="CASCADE")
-    user: User = Relationship()
     expires_at: datetime
+
+    # entities
+    user: User = Relationship()
 
 
 class Quiz(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     name: str
-    rooms: list["Room"] = Relationship(back_populates="quiz", cascade_delete=False)
     owner_id: uuid.UUID = Field(foreign_key="user.id", ondelete="CASCADE")
-    owner: User = Relationship()
     is_public: bool = False
+
+    # entities
+    rooms: list["Room"] = Relationship(back_populates="quiz", cascade_delete=False)
+    owner: User = Relationship()
 
 
 class PlayerConnection(SQLModel, table=True):
@@ -33,6 +37,8 @@ class PlayerConnection(SQLModel, table=True):
     player_id: uuid.UUID = Field(foreign_key="player.id", ondelete="CASCADE")
     room_code: str = Field(foreign_key="room.code", ondelete="CASCADE")
     active: bool = False
+
+    # entities
     player: "Player" = Relationship()
     room: "Room" = Relationship()
 
@@ -41,6 +47,8 @@ class Room(SQLModel, table=True):
     code: str = Field(primary_key=True)
     quiz_id: uuid.UUID = Field(foreign_key="quiz.id", ondelete="RESTRICT")
     owner_id: uuid.UUID = Field(foreign_key="user.id", ondelete="CASCADE")
+
+    # entities
     quiz: Quiz = Relationship(back_populates="rooms")
     owner: User = Relationship()
     games: list["Game"] = Relationship(back_populates="room")
@@ -49,16 +57,17 @@ class Room(SQLModel, table=True):
 class Player(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     name: str | None = None
-    # rooms: list[Room] = Relationship(back_populates="players", link_model=PlayerRoomLink)
 
 
 class Game(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     room_code: str = Field(foreign_key="room.code", ondelete="CASCADE")
-    room: Room = Relationship(back_populates="games")
     player_a_id: uuid.UUID = Field(foreign_key="player.id", ondelete="RESTRICT")
-    player_a: Player = Relationship(sa_relationship_kwargs=dict(foreign_keys="[Game.player_a_id]"))
     player_b_id: uuid.UUID = Field(foreign_key="player.id", ondelete="RESTRICT")
+
+    # entities
+    room: Room = Relationship(back_populates="games")
+    player_a: Player = Relationship(sa_relationship_kwargs=dict(foreign_keys="[Game.player_a_id]"))
     player_b: Player = Relationship(sa_relationship_kwargs=dict(foreign_keys="[Game.player_b_id]"))
 
 

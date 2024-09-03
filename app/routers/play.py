@@ -49,10 +49,10 @@ class PlayerWsHandler(WsHandler):
     async def on_event(self, ctrl: Controller):
         pc = ctrl.get_player_connection(self.connection_id)
         if not pc.player.name:
-            template = 'no_name'
+            template = 'play/no_name.html'
         else:
-            template = 'no_game'
-        msg = jinja_env.get_template(f'play/{template}.html').render(
+            template = 'play/no_game.html'
+        msg = jinja_env.get_template(template).render(
             player=pc.player,
             room=pc.room,
             connection_id=str(pc.id),

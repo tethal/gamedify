@@ -3,10 +3,9 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Request, WebSocket, status
 from fastapi.responses import HTMLResponse
-from sqlmodel import Session, select
 
-from app.dependencies import Controller, ControllerFactory, current_user, get_db, get_event_bus, jinja_env, templates
-from app.model import Room, User
+from app.dependencies import Controller, ControllerFactory, current_user, get_event_bus, jinja_env, templates
+from app.model import User
 from app.routers.ws_util import WsHandler
 from app.util import EventBus
 
@@ -16,9 +15,11 @@ router = APIRouter(prefix="/room")
 @router.get("/{room_code}", response_class=HTMLResponse)
 async def room_root(request: Request,
                     room_code: str,
-                    db: Annotated[Session, Depends(get_db)],
+                    ctrl: Annotated[Controller, Depends()],
                     user: Annotated[User, Depends(current_user)]):
-    room = db.exec(select(Room).where(Room.code == room_code, Room.owner == user)).one()
+    room = ctrl.get_room(room_code)
+    if room.owner != user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
     context = {"request": request, "room": room}
     return templates.TemplateResponse("room/main.html", context)
 
