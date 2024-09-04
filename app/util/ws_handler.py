@@ -1,19 +1,15 @@
 import asyncio
 import json
 import uuid
-from typing import Annotated
 
-from fastapi import Depends, WebSocket, WebSocketDisconnect
+from starlette.websockets import WebSocket, WebSocketDisconnect
 
-from app.dependencies import Controller, ControllerFactory, get_event_bus
+from app.dependencies import Controller, ControllerFactory
 from app.util import EventBus
 
 
 class WsHandler:
-    def __init__(self,
-                 websocket: WebSocket,
-                 ctrl_factory: Annotated[ControllerFactory, Depends()],
-                 event_bus: Annotated[EventBus, Depends(get_event_bus)]):
+    def __init__(self, websocket: WebSocket, ctrl_factory: ControllerFactory, event_bus: EventBus):
         self.websocket = websocket
         self.ctrl_factory = ctrl_factory
         self.event_bus = event_bus

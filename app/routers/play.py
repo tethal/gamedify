@@ -5,8 +5,8 @@ from fastapi import APIRouter, Cookie, Depends, Request, WebSocket
 from fastapi.responses import HTMLResponse
 
 from app.dependencies import Controller, ControllerFactory, get_event_bus, jinja_env, templates
-from app.routers.ws_util import WsHandler
 from app.util import EventBus
+from app.util.ws_handler import WsHandler
 
 router = APIRouter(prefix="/play")
 
@@ -49,10 +49,10 @@ class PlayerWsHandler(WsHandler):
     async def on_event(self, ctrl: Controller):
         pc = ctrl.get_player_connection(self.connection_id)
         if not pc.player.name:
-            template = 'no_name'
+            template = 'play/no_name.html'
         else:
-            template = 'no_game'
-        msg = jinja_env.get_template(f'play/{template}.html').render(
+            template = 'play/no_game.html'
+        msg = jinja_env.get_template(template).render(
             player=pc.player,
             room=pc.room,
             connection_id=str(pc.id),
