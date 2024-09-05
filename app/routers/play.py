@@ -50,11 +50,15 @@ class PlayerWsHandler(WsHandler):
         pc = ctrl.get_player_connection(self.connection_id)
         if not pc.player.name:
             template = 'play/no_name.html'
-        else:
+        elif not pc.game and not ctrl.try_start_game(pc):
             template = 'play/no_game.html'
+        else:
+            template = 'play/game.html'
+
         msg = jinja_env.get_template(template).render(
             player=pc.player,
             room=pc.room,
+            game=pc.game,
             connection_id=str(pc.id),
         )
         await self.send(msg)
