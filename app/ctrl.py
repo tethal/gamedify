@@ -77,7 +77,7 @@ class ControllerImpl:
             self.event_bus.notify(pc.game.player_a_id)
             self.event_bus.notify(pc.game.player_b_id)
         else:
-            pc.game.player_a.name = player.name
+            self.event_bus.notify(player.id)
         self.event_bus.notify(room.code)
 
     def get_player(self, player_id: uuid.UUID) -> Player:
