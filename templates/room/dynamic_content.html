@@ -1,14 +1,34 @@
 <div id="room_content">
     <article>
+        <header>Aktivní hry</header>
+        {% for game in games %}
+            <p>{{ game.id }}: {{ game.player_a.name }} vs {{ game.player_b.name }}</p>
+        {% endfor %}
+    </article>
+    <article>
+        <header>Hráči čekající na soupeře</header>
+        {% for player in waiting %}
+            <p>
+                {% if not player.name %}
+                    (jméno nezadáno)
+                {% else %}
+                    {{ player.name }}
+                {% endif %}
+            </p>
+        {% endfor %}
+    </article>
+    <article>
         <header>Připojení hráči</header>
         {% for player in players %}
             <p>
-            {% if not player.name %}
-                (jméno nezadáno)
-            {% else %}
-                {{ player.name }} -
-                <a href="#" ws-send hx-vals='{"action": "reject_name", "player_id": "{{ player.id }}"}'>reject name</a>
-            {% endif %}
+                {% if not player.name %}
+                    (jméno nezadáno)
+                {% else %}
+                    {{ player.name }} -
+                    <a href="#" ws-send hx-vals='{"action": "reject_name", "player_id": "{{ player.id }}"}'>reject
+                        name</a>
+                {% endif %}
+            </p>
         {% endfor %}
     </article>
 </div>

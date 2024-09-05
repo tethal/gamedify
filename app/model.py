@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import text
+from sqlalchemy import text, update
 from sqlmodel import Field, Relationship, SQLModel, select
 from sqlmodel import Session
 
@@ -36,11 +36,13 @@ class PlayerConnection(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     player_id: uuid.UUID = Field(foreign_key="player.id", ondelete="CASCADE")
     room_code: str = Field(foreign_key="room.code", ondelete="CASCADE")
-    active: bool = False
+    active_count: int = False
+    game_id: uuid.UUID | None = Field(foreign_key="game.id", ondelete="SET NULL")
 
     # entities
     player: "Player" = Relationship()
     room: "Room" = Relationship()
+    game: "Game" = Relationship()
 
 
 class Room(SQLModel, table=True):
@@ -76,6 +78,9 @@ def create_db(engine):
     with engine.connect() as connection:
         connection.execute(text("PRAGMA foreign_keys=ON"))  # for SQLite only
     with Session(engine) as session:
+        # TODO delete all rooms, games and player connections
+        session.exec(update(PlayerConnection).values(active_count=0))
+        session.commit()
         admin = session.exec(select(User).where(User.username == "admin")).first()
         if not admin:
             admin = User(username="admin",

@@ -46,8 +46,12 @@ class RoomWsHandler(WsHandler):
 
     async def on_event(self, ctrl: Controller):
         players = ctrl.get_room_players(self.room_code)
+        games = ctrl.get_room_games(self.room_code)
+        waiting = ctrl.get_waiting_pcs(self.room_code)
         msg = jinja_env.get_template(f'room/dynamic_content.html').render({
             'players': players,
+            'games': games,
+            'waiting': [w.player for w in waiting],
         })
         await self.send(msg)
 
