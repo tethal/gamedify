@@ -3,9 +3,10 @@ from datetime import datetime, timedelta
 from typing import Sequence
 
 import bcrypt
+from sqlalchemy import null
 from sqlmodel import Session, select
 
-from app.model import Player, PlayerConnection, Room, User, UserSession
+from app.model import Game, Player, PlayerConnection, Room, User, UserSession
 from app.util import EventBus
 
 
@@ -47,8 +48,11 @@ class ControllerImpl:
         if not player:
             player = Player()
             self.db.add(player)
-        pc = PlayerConnection(room_code=room_code, player_id=player.id)
-        self.db.add(pc)
+        pc = self.db.exec(select(PlayerConnection).where(PlayerConnection.room_code == room_code,
+                                                         PlayerConnection.player_id == player.id)).one_or_none()
+        if not pc:
+            pc = PlayerConnection(room_code=room_code, player_id=player.id)
+            self.db.add(pc)
         self.db.commit()
         return pc
 
@@ -57,7 +61,7 @@ class ControllerImpl:
 
     def set_player_connection_active(self, connection_id: uuid.UUID, active: bool) -> PlayerConnection:
         pc = self.get_player_connection(connection_id)
-        pc.active = active
+        pc.active_count = max(0, pc.active_count + (1 if active else -1))
         self.db.add(pc)
         self.db.commit()
         self.event_bus.notify(pc.room.code)
@@ -67,7 +71,13 @@ class ControllerImpl:
         player.name = name
         self.db.add(player)
         self.db.commit()
-        self.event_bus.notify(player.id)
+        pc = self.db.exec(select(PlayerConnection).where(PlayerConnection.room_code == room.code,
+                                                         PlayerConnection.player_id == player.id)).one_or_none()
+        if pc.game:
+            self.event_bus.notify(pc.game.player_a_id)
+            self.event_bus.notify(pc.game.player_b_id)
+        else:
+            pc.game.player_a.name = player.name
         self.event_bus.notify(room.code)
 
     def get_player(self, player_id: uuid.UUID) -> Player:
@@ -79,4 +89,33 @@ class ControllerImpl:
     def get_room_players(self, room_code: str) -> Sequence[Player]:
         return self.db.exec(
             select(Player).join(PlayerConnection).where(PlayerConnection.room_code == room_code,
-                                                        PlayerConnection.active).distinct()).all()
+                                                        PlayerConnection.active_count > 0).distinct()).all()
+
+    def get_room_games(self, room_code: str) -> Sequence[Game]:
+        return self.db.exec(
+            select(Game).outerjoin(PlayerConnection).where(
+                PlayerConnection.room_code == room_code, PlayerConnection.active_count > 0).distinct()).all()
+
+    def get_waiting_pcs(self, room_code: str) -> Sequence[PlayerConnection]:
+        return self.db.exec(
+            select(PlayerConnection).join(Player)
+            .where(PlayerConnection.room_code == room_code, PlayerConnection.active_count > 0,
+                   PlayerConnection.game == null(), Player.name != null())
+        ).all()
+
+    def try_start_game(self, pc: PlayerConnection) -> bool:
+        pending_pc = next((ppc for ppc in self.get_waiting_pcs(pc.room_code) if ppc.player_id != pc.player_id), None)
+        if not pending_pc:
+            return False
+
+        game = Game(room_code=pc.room_code, player_a=pending_pc.player, player_b=pc.player)
+        pc.game = game
+        pending_pc.game = game
+        self.db.add(game)
+        self.db.add(pending_pc)
+        self.db.add(pc)
+        self.db.commit()
+        self.event_bus.notify(pc.room_code)
+        self.event_bus.notify(pending_pc.player_id)
+        self.event_bus.notify(pc.player.id)
+        return True
