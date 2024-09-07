@@ -1,11 +1,9 @@
-<div id="game_content">
-    <article>
+<div id="game-content">
+    <div class="form-container">
         <form ws-send hx-vals='{"action": "set_name"}'>
-            <label>
-                Zadej svou přezdívku:
-                <input type="text" name="player_name" placeholder="jméno" required/>
-            </label>
+            <label for="player-name">Zadej svoji přezdívku:</label>
+            <input id="player-name" type="text" name="player_name" placeholder="jméno" required/>
             <input type="submit" value="Vstoupit"/>
         </form>
-    </article>
+    </div>
 </div>

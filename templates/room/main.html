@@ -1,20 +1,34 @@
-{% extends "base.html" %}
+{% extends "base.html" %} 
+
+{% block header %}
+<header>
+    {% include 'header.html' %}
+</header>
+{% endblock %} 
 
 {% block content %}
-    <div class="container">
-        {% include 'header.html' %}
-        <article>
-            <header>Místnost {{ room.code }}</header>
-            <p>Kvíz: {{ room.quiz.name }}<p>
-            <p>Vytvořena uživatelem: {{ room.owner.username }}</p>
-            <p>Odkaz pro hráče: {{ url_for('play_root', room_code=room.code) }}</p>
-        </article>
-        <div hx-ext="ws" ws-connect="/room/ws/{{ room.code }}">
-            <div id="room_content">
-                <article>
-                    <span aria-busy="true">čekej, probíhá připojování</span>
-                </article>
+<main class="room">
+    <section class="room-information">
+        <div class="room-container">
+            <div class="room-information-left">
+                <header><strong>Místnost:</strong> {{ room.code }}</header>
+                <p><strong>Kvíz:</strong> {{ room.quiz.name }}</p>
+                <p><strong>Vytvořil:</strong> {{ room.owner.username }}</p>
+            </div>
+            <div class="room-information-right">
+                <p>Odkaz pro hráče:</p>
+                <p class="room-link">{{ url_for('play_root', room_code=room.code) }}</p>
             </div>
         </div>
-    </div>
+        
+        
+    </section>
+    <section class="room-dynamic-content">
+        <div hx-ext="ws" ws-connect="/room/ws/{{ room.code }}">
+            <div id="room-content">
+                <p class="message" aria-busy="true">Čekej, probíhá připojování...</p>
+            </div>
+        </div>
+    </section>
+</main>
 {% endblock %}
