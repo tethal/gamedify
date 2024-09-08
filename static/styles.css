@@ -25,9 +25,17 @@ body>header {
     color: rgba(255, 255, 255, 0.4);
 }
 
-body>header h1 {
+body>header h1,
+body>header h1 a {
     color: rgba(255, 255, 255, 0.4);
+}
+
+body>header h1 {
     margin-left: 20px;
+}
+
+body>header h1 a {
+    text-decoration: none;
 }
 
 body>header .quiz-name {
@@ -159,7 +167,7 @@ table  a:hover {
     align-self: center;
 }
 
-.form-container form .error {
+form .error {
     text-align: center;
     color: #e04040;
     font-size: 0.8rem;
@@ -173,16 +181,16 @@ section.quiz-list {
     margin-top: 50px;
 }
 
-/* game page */
-.game, 
-.room-content, 
-.room-container, 
+/* game and room pages */
+.game,
+.room-information-container,
 .room-dynamic-content {
     width: var(--page-width);
     max-width: 100%;
     margin: 0 auto;
 }
 
+/* game page */
 #game-content {
     display: flex;
     justify-content: center;
@@ -193,23 +201,28 @@ section.quiz-list {
     background-color: #fdf8f0;
 }
 
-.room-container {
+.room-information-container {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
     flex-wrap: wrap;
     padding: 20px;
 }
 
 .room-information-left {
-    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-content: space-around;
+    gap: 6px;
 }
 
-.room-information-right {
-    flex: 3;
+.room-information-left header,
+.room-information-left p {
+    margin: 0;
 }
 
 .room-link {
-    font-size: 2rem;
+    font-size: 2.4rem;
     margin: 0;
     padding: 0;
     font-weight: bolder;

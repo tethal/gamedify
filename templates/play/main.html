@@ -2,16 +2,16 @@
 
 {% block header %}
 <header>
-    <h1>Gamedify</h1>
+    <h1><a href="{{ url_for('root') }}">Gamedify</a></h1>
     <div class="quiz-name">{{ quiz_name }}</div>
 </header>
 {% endblock %}
 
 {% block content %}
     <main class="game">
-        <div class="game" hx-ext="ws" ws-connect="/play/ws/{{ connection_id }}">
+        <div hx-ext="ws" ws-connect="/play/ws/{{ connection_id }}">
             <div id="game-content">
-                <p class="message" aria-busy="true">Čekej, probíhá připojování...</p>
+                <p class="message">Čekej, probíhá připojování...</p>
             </div>
         </div>
     </main>

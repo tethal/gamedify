@@ -2,8 +2,7 @@
 <html lang="cs" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <!-- <link rel="stylesheet" href="{{ url_for('static', path='/pico.cyan.min.css') }} "/> -->
-     <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
     <script src="{{ url_for('static', path='/htmx.min.js') }}"></script>
     <script src="{{ url_for('static', path='/ws.js') }}"></script>
     <title>{% block title %}Gamedify{% endblock %}</title>
@@ -11,7 +10,7 @@
 <body>
     {% block header %}
     <header>
-        <h1>Gamedify</h1>
+        <h1><a href="{{ url_for('root') }}">Gamedify</a></h1>
     </header>
     {% endblock %}
     {% block content %}

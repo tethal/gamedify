@@ -11,7 +11,7 @@
             {% endfor %}
         </table>
         {% else %}
-        <p>Nejsou žádné aktivní hry.</p>
+        <p>Nejsou vytvořeny žádné aktivní hry.</p>
         {% endif %}
     </section>
     <section>
@@ -30,7 +30,7 @@
             {% endfor %}
         </table>
         {% else %}
-        <p>Nejsou žádní čekající soupeři.</p>
+        <p>Nebyli nalezeni žádní čekající hráči.</p>
         {% endif %}
     </section>
     <section>
@@ -40,7 +40,7 @@
             {% for player in players %}
             <tr>
                 <td>{{ player.name if player.name is not none else '(Jméno nezadáno)' }}</td>
-                <td><a href="#" ws-send hx-vals='{"action": "reject_name", "player_id": "{{ player.id }}"}'>reject name</a></td>
+                <td><a href="#" ws-send hx-vals='{"action": "reject_name", "player_id": "{{ player.id }}"}'>odmítnout jméno</a></td>
             </tr>
             {% endfor %}
         </table>
