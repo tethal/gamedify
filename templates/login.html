@@ -1,29 +1,17 @@
 {% extends "base.html" %}
 
-{% block header %}
-<header>
-    <h1>Gamedify</h1>
-    <nav>
-        <ul>
-            <li><a href="{{ url_for('root') }}">Zpět</a></li>
-        </ul>
-    </nav>
-</header>
-{% endblock %}
-
 {% block content %}
     <main class="form">
         <div class="login-form-container">
             <form method="POST">
                 <label for="username">Uživatelské jméno:</label>
-                <input id="username" type="text" name="username" value="{{ username }}" required
-                        aria-invalid="{{ invalid_login|string|lower }}"/>
-                
+                <input id="username" type="text" name="username" value="{{ username }}" required />
+
                 <label for="password">Heslo:</label>
                 <input id="password" type="password" name="password" required aria-invalid="{{ invalid_login|string|lower }}"/>
                 
                 {% if invalid_login %}
-                    <small style="color:#e04040">Neplatné jméno nebo heslo</small>
+                <p class="error">Neplatné jméno nebo heslo</p>
                 {% endif %}
                 <input type="submit" value="Přihlásit se"/>
             </form>

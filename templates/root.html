@@ -2,7 +2,7 @@
 
 {% block header %}
 <header>
-    <h1>Gamedify</h1>
+    <h1><a href="{{ url_for('root') }}">Gamedify</a></h1>
     <nav>
         <ul>
             <li><a href="{{ url_for('login_form') }}">Přihlásit se</a></li>
@@ -15,8 +15,7 @@
     <div class="form-container">
         <form action="/" method="POST">
             <label for="room-code">Kód místnosti:</label>
-            <input id="room-code" type="text" name="code" placeholder="123-456" value="{{ value|e }}"
-                    required aria-invalid="{{ invalid_code|string|lower }}"/>
+            <input id="room-code" type="text" name="code" placeholder="123-456" value="{{ value|e }}" required/>
             {% if invalid_code %}
                 <p class="error">Neplatný kód</p>
             {% endif %}

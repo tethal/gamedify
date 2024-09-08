@@ -8,25 +8,23 @@
 
 {% block content %}
 <main class="room">
-    <section class="room-information">
-        <div class="room-container">
+    <header class="room-information">
+        <div class="room-information-container">
             <div class="room-information-left">
                 <header><strong>Místnost:</strong> {{ room.code }}</header>
                 <p><strong>Kvíz:</strong> {{ room.quiz.name }}</p>
                 <p><strong>Vytvořil:</strong> {{ room.owner.username }}</p>
             </div>
             <div class="room-information-right">
-                <p>Odkaz pro hráče:</p>
                 <p class="room-link">{{ url_for('play_root', room_code=room.code) }}</p>
             </div>
         </div>
-        
-        
-    </section>
+    </header>
+    
     <section class="room-dynamic-content">
         <div hx-ext="ws" ws-connect="/room/ws/{{ room.code }}">
             <div id="room-content">
-                <p class="message" aria-busy="true">Čekej, probíhá připojování...</p>
+                <p class="message">Čekej, probíhá připojování...</p>
             </div>
         </div>
     </section>
