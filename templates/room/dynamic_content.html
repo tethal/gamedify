@@ -1,34 +1,51 @@
-<div id="room_content">
-    <article>
-        <header>Aktivní hry</header>
-        {% for game in games %}
-            <p>{{ game.id }}: {{ game.player_a.name }} vs {{ game.player_b.name }}</p>
-        {% endfor %}
-    </article>
-    <article>
-        <header>Hráči čekající na soupeře</header>
-        {% for player in waiting %}
-            <p>
+<div id="room-content">
+    <section>
+        <h2>Aktivní hry</h2>
+        {% if games %}
+        <table>
+            {% for game in games %}
+            <tr>
+                <td>{{ game.player_a.name if game.player_a.name is not none else '(Jméno nezadáno)' }} vs {{ game.player_b.name if game.player_b.name is not none else '(Jméno nezadáno)' }}</td>
+                <td>{{ game.id }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p>Nejsou vytvořeny žádné aktivní hry.</p>
+        {% endif %}
+    </section>
+    <section>
+        <h2>Hráči čekající na soupeře</h2>
+        {% if waiting %}
+        <table>
+            {% for player in waiting %}
+            <tr>
                 {% if not player.name %}
-                    (jméno nezadáno)
+                <td>(jméno nezadáno)</td>
                 {% else %}
-                    {{ player.name }}
+                <td>{{ player.name }}</td>
                 {% endif %}
-            </p>
-        {% endfor %}
-    </article>
-    <article>
-        <header>Připojení hráči</header>
-        {% for player in players %}
-            <p>
-                {% if not player.name %}
-                    (jméno nezadáno)
-                {% else %}
-                    {{ player.name }} -
-                    <a href="#" ws-send hx-vals='{"action": "reject_name", "player_id": "{{ player.id }}"}'>reject
-                        name</a>
-                {% endif %}
-            </p>
-        {% endfor %}
-    </article>
+                <td></td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p>Nebyli nalezeni žádní čekající hráči.</p>
+        {% endif %}
+    </section>
+    <section>
+        <h2>Připojení hráči</h2>
+        {% if players %}
+        <table>
+            {% for player in players %}
+            <tr>
+                <td>{{ player.name if player.name is not none else '(Jméno nezadáno)' }}</td>
+                <td><a href="#" ws-send hx-vals='{"action": "reject_name", "player_id": "{{ player.id }}"}'>odmítnout jméno</a></td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p>Nejsou připojení žádní hráči.</p>
+        {% endif %}
+    </section>
 </div>

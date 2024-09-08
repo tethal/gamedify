@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 
+{% block header %}
+<header>
+    <h1><a href="{{ url_for('root') }}">Gamedify</a></h1>
+    <div class="quiz-name">{{ quiz_name }}</div>
+</header>
+{% endblock %}
+
 {% block content %}
-    <div class="container">
-        <nav>
-            <ul>
-                <li><strong>{{ quiz_name }}</strong></li>
-            </ul>
-        </nav>
+    <main class="game">
         <div hx-ext="ws" ws-connect="/play/ws/{{ connection_id }}">
-            <div id="game_content">
-                <article>
-                    <span aria-busy="true">čekej, probíhá připojování</span>
-                </article>
+            <div id="game-content">
+                <p class="message">Čekej, probíhá připojování...</p>
             </div>
         </div>
-    </div>
+    </main>
 {% endblock %}

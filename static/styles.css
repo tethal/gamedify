@@ -1,0 +1,234 @@
+:root {
+    --page-width: 900px;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+}
+
+main {
+    display: flex;
+    justify-content: center;
+}
+
+main.room {
+    flex-direction: column;
+}
+
+/* header */
+body>header {
+    background-color: rgb(29, 43, 60);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+body>header h1,
+body>header h1 a {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+body>header h1 {
+    margin-left: 20px;
+}
+
+body>header h1 a {
+    text-decoration: none;
+}
+
+body>header .quiz-name {
+    color: white;
+    margin: 0 20px;
+}
+
+/* navigation */
+nav ul {
+    margin: 0 20px 0 0;
+    list-style-type: none;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 10px
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+/* table */
+table {
+    border-radius: 8px;
+    width: 100%;
+    background: #f7f7f7;
+    border: 1px solid #f7f7f7;
+    box-shadow: 3px 3px 5px rgb(141, 141, 141);
+    border-spacing: 0;
+}
+
+tr:nth-child(odd) td {
+    background-color: #ececec;
+}
+
+tr:first-child td:first-child:first-of-type {
+    border-top-left-radius: 8px;
+}
+
+tr:first-child td:last-child:first-of-type {
+    border-top-right-radius: 8px;
+}
+
+tr:last-child td:first-child:last-of-type {
+    border-bottom-left-radius: 8px;
+}
+
+tr:last-child td:last-child:last-of-type {
+    border-bottom-right-radius: 8px;
+}
+
+td {
+    padding: 8px;
+    margin: 0;
+}
+
+table td:last-of-type {
+    text-align: right;
+}
+
+table a {
+    text-decoration: none;
+    color: #37858b;
+}
+
+table  a:hover {
+    text-decoration: underline;
+    color: #1b595e;
+}
+
+/* form container */
+.form-container, .login-form-container {
+    display: flex;
+    justify-content: center;
+    width: 324px;
+    max-width: 90%;
+    background-color: #f7f7f7;
+    border-radius: 8px;
+    box-shadow: 3px 3px 5px rgb(141, 141, 141);
+    margin-top: 50px;
+}
+
+.form-container {
+    height: 250px;
+}
+
+.login-form-container {
+    height: 350px;
+}
+
+.form-container form, .login-form-container form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+}
+
+.form-container form label, .login-form-container form label {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.form-container form input[type="text"], 
+.login-form-container form input[type="text"],
+.login-form-container form input[type="password"]  {
+    height: 50px;
+    text-align: center;
+    font-size: 1.3rem;
+    width: 90%;
+    border-radius: 8px;
+    outline: none;
+    border: 2px solid #818181;
+    color: #bbbbbb;
+}
+
+.form-container form input[type="submit"], .login-form-container form input[type="submit"] {
+    position: absolute;
+    background-color: #37858b;
+    padding: 15px;
+    border: none;
+    cursor: pointer;
+    color: white;
+    border-radius: 8px;
+    bottom: 20px;
+    width: 150px;
+    align-self: center;
+}
+
+form .error {
+    text-align: center;
+    color: #e04040;
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+/* quiz list */
+section.quiz-list {
+    width: var(--page-width);
+    max-width: 100%;
+    margin-top: 50px;
+}
+
+/* game and room pages */
+.game,
+.room-information-container,
+.room-dynamic-content {
+    width: var(--page-width);
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+/* game page */
+#game-content {
+    display: flex;
+    justify-content: center;
+}
+
+/* room page */
+.room-information {
+    background-color: #fdf8f0;
+}
+
+.room-information-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 20px;
+}
+
+.room-information-left {
+    display: flex;
+    flex-direction: column;
+    align-content: space-around;
+    gap: 6px;
+}
+
+.room-information-left header,
+.room-information-left p {
+    margin: 0;
+}
+
+.room-link {
+    font-size: 2.4rem;
+    margin: 0;
+    padding: 0;
+    font-weight: bolder;
+}
+
+/* other */
+.message {
+    color: #616161;
+}
