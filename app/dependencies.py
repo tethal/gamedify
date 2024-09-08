@@ -54,3 +54,11 @@ async def current_user(ctrl: Annotated[Controller, Depends()],
         if user := ctrl.get_user_for_session(session_id):
             return user
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+
+
+async def current_user_opt(ctrl: Annotated[Controller, Depends()],
+                           session_id: Annotated[uuid.UUID | None, Cookie()] = None):
+    if session_id:
+        if user := ctrl.get_user_for_session(session_id):
+            return user
+    return None

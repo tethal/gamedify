@@ -3,14 +3,16 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Form, Request, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 
-from app.dependencies import Controller, templates
+from app.dependencies import Controller, current_user_opt, templates
+from app.model import User
 
 router = APIRouter()
 
 
 @router.get("/", response_class=HTMLResponse)
-async def root(request: Request):
-    context = {"request": request}
+async def root(request: Request,
+               user: Annotated[User | None, Depends(current_user_opt)]):
+    context = {"request": request, "user": user}
     return templates.TemplateResponse("root.html", context)
 
 

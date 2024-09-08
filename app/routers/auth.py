@@ -4,16 +4,16 @@ from typing import Annotated
 from fastapi import APIRouter, Cookie, Depends, Form, Request, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 
-from app.dependencies import Controller, templates
+from app.dependencies import Controller, current_user_opt, templates
+from app.model import User
 
 router = APIRouter()
 
 
 @router.get("/login", response_class=HTMLResponse)
 async def login_form(request: Request,
-                     ctrl: Annotated[Controller, Depends()],
-                     session_id: Annotated[uuid.UUID | None, Cookie()] = None):
-    if session_id and ctrl.get_user_for_session(session_id):
+                     user: Annotated[User | None, Depends(current_user_opt)]):
+    if user:
         return RedirectResponse(url=request.url_for('quiz_root'), status_code=status.HTTP_303_SEE_OTHER)
     context = {"request": request}
     return templates.TemplateResponse("login.html", context)
