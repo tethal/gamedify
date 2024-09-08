@@ -2,12 +2,11 @@
 
 {% block header %}
 <header>
-    <h1><a href="{{ url_for('root') }}">Gamedify</a></h1>
-    <nav>
-        <ul>
-            <li><a href="{{ url_for('login_form') }}">Přihlásit se</a></li>
-        </ul>
-    </nav>
+    {% if user %}
+        {% include 'partials/header_admin.html' %}
+    {% else %}
+        {% include 'partials/header_login.html' %}
+    {% endif %}
 </header>
 {% endblock %}
 {% block content %}

@@ -10,7 +10,7 @@
 <body>
     {% block header %}
     <header>
-        <h1><a href="{{ url_for('root') }}">Gamedify</a></h1>
+        {% include 'partials/header_logo.html' %}
     </header>
     {% endblock %}
     {% block content %}

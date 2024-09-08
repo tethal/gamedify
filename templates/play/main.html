@@ -2,7 +2,7 @@
 
 {% block header %}
 <header>
-    <h1><a href="{{ url_for('root') }}">Gamedify</a></h1>
+    {% include 'partials/header_logo.html'  %}
     <div class="quiz-name">{{ quiz_name }}</div>
 </header>
 {% endblock %}
