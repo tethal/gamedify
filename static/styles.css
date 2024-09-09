@@ -2,6 +2,10 @@
     --page-width: 900px;
 }
 
+html {
+    font-size: 16pt;
+}
+
 body {
     padding: 0;
     margin: 0;
@@ -36,6 +40,7 @@ body>header h1 {
 
 body>header h1 a {
     text-decoration: none;
+    font-size: 2rem;
 }
 
 body>header .quiz-name {
@@ -103,17 +108,17 @@ table a {
     color: #37858b;
 }
 
-table  a:hover {
+table a:hover {
     text-decoration: underline;
     color: #1b595e;
 }
 
-/* form container */
-.form-container, .login-form-container {
+/* form */
+.form-container,
+.login-form-container {
     display: flex;
     justify-content: center;
-    width: 324px;
-    max-width: 90%;
+    width: 80%;
     background-color: #f7f7f7;
     border-radius: 8px;
     box-shadow: 3px 3px 5px rgb(141, 141, 141);
@@ -128,7 +133,7 @@ table  a:hover {
     height: 350px;
 }
 
-.form-container form, .login-form-container form {
+form {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -136,35 +141,36 @@ table  a:hover {
     position: relative;
 }
 
-.form-container form label, .login-form-container form label {
+form label {
     text-align: center;
     margin-top: 20px;
 }
 
-.form-container form input[type="text"], 
-.login-form-container form input[type="text"],
-.login-form-container form input[type="password"]  {
+form input:not([type="submit"]) {
     height: 50px;
     text-align: center;
-    font-size: 1.3rem;
-    width: 90%;
+    font-size: 2.0rem;
+    width: 80%;
     border-radius: 8px;
     outline: none;
     border: 2px solid #818181;
+    color: #8d8d8d;
+}
+
+form input::placeholder {
     color: #bbbbbb;
 }
 
-.form-container form input[type="submit"], .login-form-container form input[type="submit"] {
-    position: absolute;
+form input[type="submit"] {
     background-color: #37858b;
     padding: 15px;
     border: none;
     cursor: pointer;
     color: white;
     border-radius: 8px;
-    bottom: 20px;
-    width: 150px;
-    align-self: center;
+    width: 60%;
+    margin-top: auto;
+    margin-bottom: 20px;
 }
 
 form .error {
@@ -176,17 +182,17 @@ form .error {
 
 /* quiz list */
 section.quiz-list {
-    width: var(--page-width);
-    max-width: 100%;
+    width: 90%;
     margin-top: 50px;
 }
 
 /* game and room pages */
-.game,
-.room-information-container,
-.room-dynamic-content {
-    width: var(--page-width);
-    max-width: 100%;
+.game-container {
+    width: 100%;
+}
+
+.game {
+    width: 100%;
     margin: 0 auto;
 }
 
@@ -197,6 +203,12 @@ section.quiz-list {
 }
 
 /* room page */
+.room-information-container,
+.room-dynamic-content {
+    width: 90%;
+    margin: 0 auto;
+}
+
 .room-information {
     background-color: #fdf8f0;
 }
@@ -231,4 +243,26 @@ section.quiz-list {
 /* other */
 .message {
     color: #616161;
+}
+
+@media (min-width: 758px) {
+
+    html {
+        font-size: 12pt;
+    }
+
+    .form-container,
+    .login-form-container {
+        width: 325px;
+    }
+}
+
+@media (min-width: 992px) {
+
+    section.quiz-list,
+    .game,
+    .room-information-container,
+    .room-dynamic-content {
+        width: var(--page-width)
+    }
 }
