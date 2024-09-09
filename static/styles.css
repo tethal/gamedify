@@ -3,7 +3,7 @@
 }
 
 html {
-    font-size: 16pt;
+    font-size: 12pt;
 }
 
 body {
@@ -186,7 +186,7 @@ section.quiz-list {
     margin-top: 50px;
 }
 
-/* game and room pages */
+/* game page */
 .game-container {
     width: 100%;
 }
@@ -196,7 +196,6 @@ section.quiz-list {
     margin: 0 auto;
 }
 
-/* game page */
 #game-content {
     display: flex;
     justify-content: center;
@@ -233,8 +232,11 @@ section.quiz-list {
     margin: 0;
 }
 
+.room-information-right {
+    padding: 10px 0;
+}
+
 .room-link {
-    font-size: 2.4rem;
     margin: 0;
     padding: 0;
     font-weight: bolder;
@@ -245,24 +247,35 @@ section.quiz-list {
     color: #616161;
 }
 
-@media (min-width: 758px) {
-
-    html {
-        font-size: 12pt;
-    }
+@media only screen and (min-width: 576px) {
 
     .form-container,
     .login-form-container {
         width: 325px;
     }
+
+    .room-link {
+        font-size: 1.4rem;
+    }
 }
 
-@media (min-width: 992px) {
+@media only screen and (min-width: 758px) {
+
+    .room-link {
+        font-size: 1.8rem;
+    }
+}
+
+@media only screen and (min-width: 992px) {
 
     section.quiz-list,
     .game,
     .room-information-container,
     .room-dynamic-content {
         width: var(--page-width)
+    }
+
+    .room-link {
+        font-size: 2.4rem;
     }
 }
