@@ -41,10 +41,10 @@ class ControllerImpl:
     def is_room_code_valid(self, code: str) -> bool:
         return self.db.get(Room, code) is not None
 
-    def create_player_connection(self, room_code: str, player_id: uuid.UUID) -> PlayerConnection | None:
+    def create_player_connection(self, room_code: str, player_id: uuid.UUID | None) -> PlayerConnection | None:
         if not self.is_room_code_valid(room_code):
             return None
-        player = self.db.get(Player, player_id)
+        player = self.db.get(Player, player_id) if player_id else None
         if not player:
             player = Player()
             self.db.add(player)
