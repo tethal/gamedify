@@ -12,7 +12,7 @@ from app.util import EventBus
 
 jinja_env = Environment(loader=FileSystemLoader("templates"), autoescape=True)
 templates = Jinja2Templates(env=jinja_env)
-engine = create_engine("sqlite:///gamedify.db", echo=True, connect_args={"check_same_thread": False})
+engine = create_engine("sqlite:///gamedify.db", echo=False, connect_args={"check_same_thread": False})
 _event_bus = EventBus()
 
 

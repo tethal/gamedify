@@ -1,7 +1,77 @@
 <div id="game-content">
-    <article>
-        Hello, {{ player.name }}, your game has started.
-        <p>Player A: {{ game.player_a.name }}</p>
-        <p>Player B: {{ game.player_b.name }}</p>
-    </article>
+
+    <svg viewBox="{{ board_layout.view_box }}">
+        <style>
+            text {
+                user-select: none;
+            }
+
+            .rotate {
+                transition: transform 0.5s ease, stroke 2s ease;
+                cursor: pointer;
+            }
+
+            .rotate:hover {
+                transform: rotate(10deg);
+            }
+
+            .rotate:hover polygon {
+                stroke: url(#strokeGradientGreen);
+            }
+        </style>
+
+        <defs>
+            <linearGradient id="fillGradient" x1="50%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:gray"/>
+                <stop offset="30%" style="stop-color:white"/>
+                <stop offset="100%" style="stop-color:white"/>
+            </linearGradient>
+
+            <linearGradient id="strokeGradient" x1="0%" y1="50%" x2="25%" y2="0%">
+                <stop offset="0%" style="stop-color:gray"/>
+                <stop offset="60%" style="stop-color:white"/>
+                <stop offset="100%" style="stop-color:white"/>
+            </linearGradient>
+
+            <linearGradient id="fillGradientGreen" x1="50%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color: #696969"/>
+                <stop offset="30%" style="stop-color: #b9ecb0"/>
+                <stop offset="100%" style="stop-color: #b9ecb0"/>
+            </linearGradient>
+
+            <linearGradient id="strokeGradientGreen" x1="0%" y1="50%" x2="25%" y2="0%">
+                <stop offset="0%" style="stop-color:#696969"/>
+                <stop offset="60%" style="stop-color:#b9ecb0"/>
+                <stop offset="100%" style="stop-color:#b9ecb0"/>
+            </linearGradient>
+
+            <linearGradient id="strokeGradient2" x1="0%" y1="50%" x2="25%" y2="0%">
+                <stop offset="0%" style="stop-color:red"/>
+                <stop offset="60%" style="stop-color:white"/>
+                <stop offset="100%" style="stop-color:white"/>
+            </linearGradient>
+
+            <filter id="dropshadow" height="130%">
+                <feDropShadow dx="0.1" dy="1" stdDeviation="1" flood-opacity="0.2"/>
+            </filter>
+        </defs>
+
+        {% for tile in board_layout.tiles %}
+            <g transform="translate({{ tile.x }}, {{ tile.y }})">
+                <g class="rotate">
+                    <polygon
+                            points="8.14,4.7 0,9.4 -8.14,4.7 -8.14,-4.7 0,-9.4 8.14,-4.7"
+                            fill="url(#fillGradient)"
+                            stroke="url(#strokeGradient)"
+                            stroke-width="1"
+                            filter="url(#dropshadow)"/>
+                    <text x="0" y="1" font-weight="bold" text-anchor="middle" dominant-baseline="middle"
+                          font-size="7.52" fill="gray">{{ tile.id + 1 }}
+                    </text>
+                </g>
+            </g>
+        {% endfor %}
+
+    </svg>
+
 </div>
