@@ -6,7 +6,6 @@ from fastapi.responses import HTMLResponse
 
 from app.dependencies import Controller, ControllerFactory, get_event_bus, jinja_env, templates
 from app.util import EventBus
-from app.util.azk import BoardLayout
 from app.util.ws_handler import WsHandler
 
 router = APIRouter(prefix="/play")
@@ -60,8 +59,7 @@ class PlayerWsHandler(WsHandler):
             player=pc.player,
             room=pc.room,
             game=pc.game,
-            connection_id=str(pc.id),
-            board_layout=BoardLayout.from_max_tile_count(28)
+            connection_id=str(pc.id)
         )
         await self.send(msg)
 

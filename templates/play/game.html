@@ -1,6 +1,6 @@
 <div id="game-content">
 
-    <svg viewBox="{{ board_layout.view_box }}">
+    <svg viewBox="{{ game.board_view_box }}">
         <style>
             text {
                 user-select: none;
@@ -56,7 +56,7 @@
             </filter>
         </defs>
 
-        {% for tile in board_layout.tiles %}
+        {% for tile in game.tiles %}
             <g transform="translate({{ tile.x }}, {{ tile.y }})">
                 <g class="rotate">
                     <polygon
@@ -66,7 +66,7 @@
                             stroke-width="1"
                             filter="url(#dropshadow)"/>
                     <text x="0" y="1" font-weight="bold" text-anchor="middle" dominant-baseline="middle"
-                          font-size="7.52" fill="gray">{{ tile.id + 1 }}
+                          font-size="7.52" fill="gray">{{ tile.index + 1 }}
                     </text>
                 </g>
             </g>

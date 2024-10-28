@@ -1,13 +1,15 @@
 import uuid
 from datetime import datetime, timedelta
+from random import shuffle
 from typing import Sequence
 
 import bcrypt
 from sqlalchemy import null
 from sqlmodel import Session, select
 
-from app.model import Game, Player, PlayerConnection, Room, User, UserSession
+from app.model import Game, Player, PlayerConnection, PlayerRole, Room, Tile, User, UserSession
 from app.util import EventBus
+from app.util.azk import BoardLayout
 
 
 class ControllerImpl:
@@ -108,12 +110,23 @@ class ControllerImpl:
         if not pending_pc:
             return False
 
-        game = Game(room_code=pc.room_code, player_a=pending_pc.player, player_b=pc.player)
+        quiz = pc.room.quiz
+        layout = BoardLayout.from_max_tile_count(len(quiz.questions))
+
+        game = Game(room=pc.room, player_a=pending_pc.player, player_b=pc.player,
+                    player_on_turn_role=PlayerRole.A, board_view_box=layout.view_box)
         pc.game = game
         pending_pc.game = game
         self.db.add(game)
         self.db.add(pending_pc)
         self.db.add(pc)
+        questions = list(quiz.questions)
+        shuffle(questions)
+        for question, tile_layout in zip(questions, layout.tiles):
+            tile = Tile(game=game,
+                        index=tile_layout.id, x=tile_layout.x, y=tile_layout.y,
+                        question="|".join([question.text] + [a.text for a in question.answers]))
+            self.db.add(tile)
         self.db.commit()
         self.event_bus.notify(pc.room_code)
         self.event_bus.notify(pending_pc.player_id)
