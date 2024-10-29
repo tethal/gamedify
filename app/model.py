@@ -83,10 +83,16 @@ class PlayerRole(enum.Enum):
     A = "A"
     B = "B"
 
+    def swap(self):
+        return PlayerRole.A if self == PlayerRole.B else PlayerRole.B
+
 
 class Player(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     name: str | None = None
+
+    # entities
+    connections: list[PlayerConnection] = Relationship(back_populates="player")
 
 
 class Game(SQLModel, table=True):
@@ -101,14 +107,26 @@ class Game(SQLModel, table=True):
     room: Room = Relationship(back_populates="games")
     player_a: Player = Relationship(sa_relationship_kwargs=dict(foreign_keys="[Game.player_a_id]"))
     player_b: Player = Relationship(sa_relationship_kwargs=dict(foreign_keys="[Game.player_b_id]"))
-    tiles: list["Tile"] = Relationship(back_populates="game")
+    tiles: list["Tile"] = Relationship(back_populates="game", cascade_delete=True)
 
     @property
     def player_on_turn(self) -> Player:
         return self.player_a if self.player_on_turn_role == PlayerRole.A else self.player_b
 
+    @property
     def selected_tile(self) -> Optional["Tile"]:
         return next((t for t in self.tiles if t.state == TileState.SELECTED), None)
+
+    def get_opponent(self, player: Player) -> Player:
+        assert player in (self.player_a, self.player_b)
+        return self.player_a if player == self.player_b else self.player_b
+
+    def is_player_active(self, player: Player) -> bool:
+        return any(pc.active_count for pc in player.connections if pc.game == self)
+
+    def is_opponent_active(self, player: Player) -> bool:
+        opponent = self.get_opponent(player)
+        return any(pc.active_count for pc in opponent.connections if pc.game == self)
 
 
 class TileState(enum.Enum):
@@ -116,6 +134,11 @@ class TileState(enum.Enum):
     SELECTED = "SELECTED"
     A = "A"
     B = "B"
+
+    @staticmethod
+    def from_role(role: PlayerRole, swap: bool) -> "TileState":
+        r = role.swap() if swap else role
+        return TileState.A if r == PlayerRole.A else TileState.B
 
 
 class Tile(SQLModel, table=True):
@@ -129,6 +152,14 @@ class Tile(SQLModel, table=True):
 
     # entities
     game: Game = Relationship(back_populates="tiles")
+
+    @property
+    def question_text(self) -> str:
+        return self.question.split('|')[0]
+
+    @property
+    def answers(self) -> list[str]:
+        return self.question.split('|')[1:]
 
 
 test_quiz = {

@@ -1,3 +1,4 @@
+import unicodedata
 import uuid
 from datetime import datetime, timedelta
 from random import shuffle
@@ -7,7 +8,7 @@ import bcrypt
 from sqlalchemy import null
 from sqlmodel import Session, select
 
-from app.model import Game, Player, PlayerConnection, PlayerRole, Room, Tile, User, UserSession
+from app.model import Game, Player, PlayerConnection, PlayerRole, Room, Tile, TileState, User, UserSession
 from app.util import EventBus
 from app.util.azk import BoardLayout
 
@@ -67,6 +68,9 @@ class ControllerImpl:
         self.db.add(pc)
         self.db.commit()
         self.event_bus.notify(pc.room.code)
+        if pc.game:
+            self.event_bus.notify(pc.game.player_a_id)
+            self.event_bus.notify(pc.game.player_b_id)
         return pc
 
     def set_player_name(self, room: Room, player: Player, name: str | None):
@@ -132,3 +136,48 @@ class ControllerImpl:
         self.event_bus.notify(pending_pc.player_id)
         self.event_bus.notify(pc.player.id)
         return True
+
+    def tile_click(self, pc: PlayerConnection, tile_index: int):
+        if not pc.game or pc.game.player_on_turn != pc.player or pc.game.selected_tile is not None:
+            return
+        tile = next((t for t in pc.game.tiles if t.index == tile_index), None)
+        if not tile or tile.state != TileState.DEFAULT:
+            return
+        tile.state = TileState.SELECTED
+        self.db.add(tile)
+        self.db.commit()
+        self.event_bus.notify(pc.game.player_a_id)
+        self.event_bus.notify(pc.game.player_b_id)
+
+    def submit_answer(self, pc: PlayerConnection, answer: str | None):
+
+        def normalize(s: str) -> str:
+            return ''.join(
+                c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn').strip().lower()
+
+        if not pc.game or pc.game.player_on_turn != pc.player or not pc.game.selected_tile:
+            return
+        invalid = True
+        if answer:
+            answer = normalize(answer)
+            for a in pc.game.selected_tile.answers:
+                if normalize(a) == answer:
+                    invalid = False
+                    break
+        pc.game.selected_tile.state = TileState.from_role(pc.game.player_on_turn_role, invalid)
+        pc.game.player_on_turn_role = pc.game.player_on_turn_role.swap()
+        # TODO: check if the game is over
+        self.db.add(pc.game)
+        self.db.commit()
+        self.event_bus.notify(pc.game.player_a_id)
+        self.event_bus.notify(pc.game.player_b_id)
+
+    def start_new_game(self, pc: PlayerConnection):
+        if not pc.game:
+            return
+        players = [pc.game.player_a, pc.game.player_b]
+        self.db.delete(pc.game)
+        self.db.commit()
+        self.event_bus.notify(pc.room_code)
+        for player in players:
+            self.event_bus.notify(player.id)
