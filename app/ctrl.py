@@ -10,7 +10,7 @@ from sqlmodel import Session, select
 
 from app.model import Game, Player, PlayerConnection, PlayerRole, Room, Tile, TileState, User, UserSession
 from app.util import EventBus
-from app.util.azk import BoardLayout
+from app.util import azk
 
 
 class ControllerImpl:
@@ -115,10 +115,10 @@ class ControllerImpl:
             return False
 
         quiz = pc.room.quiz
-        layout = BoardLayout.from_max_tile_count(len(quiz.questions))
+        layout = azk.BoardLayout.from_max_tile_count(len(quiz.questions))
 
         game = Game(room=pc.room, player_a=pending_pc.player, player_b=pc.player,
-                    player_on_turn_role=PlayerRole.A, board_view_box=layout.view_box)
+                    player_on_turn_role=PlayerRole.A, rows=layout.rows)
         pc.game = game
         pending_pc.game = game
         self.db.add(game)
@@ -126,9 +126,9 @@ class ControllerImpl:
         self.db.add(pc)
         questions = list(quiz.questions)
         shuffle(questions)
-        for question, tile_layout in zip(questions, layout.tiles):
+        for question, (row, col) in zip(questions, layout.tiles):
             tile = Tile(game=game,
-                        index=tile_layout.id, x=tile_layout.x, y=tile_layout.y,
+                        row=row, col=col,
                         question="|".join([question.text] + [a.text for a in question.answers]))
             self.db.add(tile)
         self.db.commit()
@@ -140,7 +140,7 @@ class ControllerImpl:
     def tile_click(self, pc: PlayerConnection, tile_index: int):
         if not pc.game or pc.game.player_on_turn != pc.player or pc.game.selected_tile is not None:
             return
-        tile = next((t for t in pc.game.tiles if t.index == tile_index), None)
+        tile = pc.game.get_tile_by_index(tile_index)
         if not tile or tile.state != TileState.DEFAULT:
             return
         tile.state = TileState.SELECTED
@@ -164,9 +164,16 @@ class ControllerImpl:
                 if normalize(a) == answer:
                     invalid = False
                     break
-        pc.game.selected_tile.state = TileState.from_role(pc.game.player_on_turn_role, invalid)
-        pc.game.player_on_turn_role = pc.game.player_on_turn_role.swap()
-        # TODO: check if the game is over
+        tile = pc.game.selected_tile
+        player_role = pc.game.player_on_turn_role
+        if invalid:
+            player_role = player_role.swap()
+        tile.state = TileState.from_role(player_role)
+        if azk.is_winner_move(pc.game, tile):
+            pc.game.player_on_turn_role = player_role
+            pc.game.is_over = True
+        else:
+            pc.game.player_on_turn_role = pc.game.player_on_turn_role.swap()
         self.db.add(pc.game)
         self.db.commit()
         self.event_bus.notify(pc.game.player_a_id)
@@ -176,7 +183,12 @@ class ControllerImpl:
         if not pc.game:
             return
         players = [pc.game.player_a, pc.game.player_b]
-        self.db.delete(pc.game)
+        opponent = pc.game.get_opponent(pc.player)
+        if pc.game.is_player_active(opponent):
+            pc.game = None
+            self.db.add(pc)
+        else:
+            self.db.delete(pc.game)
         self.db.commit()
         self.event_bus.notify(pc.room_code)
         for player in players:

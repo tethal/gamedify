@@ -1,6 +1,6 @@
 {% set my_role = 'A' if player == game.player_a else 'B' %}
 {% set opponent = game.get_opponent(player) %}
-{% set on_turn = player == game.player_on_turn and game.is_player_active(opponent) %}
+{% set on_turn = player == game.player_on_turn and game.is_player_active(opponent) and not game.is_over %}
 <div id="game-content">
     <div class="board-container">
         <div class="player-container">
@@ -14,7 +14,10 @@
         </div>
 
         {# TODO: modal window, the player can either click the button or close the tab #}
-        {% if not game.is_player_active(opponent) %}
+        {% if game.is_over %}
+            <p>Konec hry, vítězí {{ game.player_on_turn.name }}.</p>
+            <button ws-send hx-vals='{"action": "start_new_game"}'>Začít novou hru</button>
+        {% elif not game.is_player_active(opponent) %}
             <p>{{ opponent.name }} je offline. Čekej, až se připojí, nebo můžeš začít novou hru s někým jiným.</p>
             <button ws-send hx-vals='{"action": "start_new_game"}'>Začít novou hru</button>
         {% endif %}

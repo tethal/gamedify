@@ -8,6 +8,8 @@ from sqlalchemy import Column, Enum, text, update
 from sqlmodel import Field, Relationship, SQLModel, select
 from sqlmodel import Session
 
+from app.util import azk
+
 
 class User(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
@@ -101,13 +103,18 @@ class Game(SQLModel, table=True):
     player_a_id: uuid.UUID = Field(foreign_key="player.id", ondelete="RESTRICT")
     player_b_id: uuid.UUID = Field(foreign_key="player.id", ondelete="RESTRICT")
     player_on_turn_role: PlayerRole = Field(sa_column=Column(Enum(PlayerRole)))
-    board_view_box: str
+    is_over: bool = False
+    rows: int
 
     # entities
     room: Room = Relationship(back_populates="games")
     player_a: Player = Relationship(sa_relationship_kwargs=dict(foreign_keys="[Game.player_a_id]"))
     player_b: Player = Relationship(sa_relationship_kwargs=dict(foreign_keys="[Game.player_b_id]"))
     tiles: list["Tile"] = Relationship(back_populates="game", cascade_delete=True)
+
+    @property
+    def board_view_box(self):
+        return azk.BoardLayout(self.rows).view_box
 
     @property
     def player_on_turn(self) -> Player:
@@ -128,6 +135,9 @@ class Game(SQLModel, table=True):
         opponent = self.get_opponent(player)
         return any(pc.active_count for pc in opponent.connections if pc.game == self)
 
+    def get_tile_by_index(self, index: int) -> Optional["Tile"]:
+        return next((t for t in self.tiles if t.index == index), None)
+
 
 class TileState(enum.Enum):
     DEFAULT = "DEFAULT"
@@ -136,22 +146,36 @@ class TileState(enum.Enum):
     B = "B"
 
     @staticmethod
-    def from_role(role: PlayerRole, swap: bool) -> "TileState":
-        r = role.swap() if swap else role
-        return TileState.A if r == PlayerRole.A else TileState.B
+    def from_role(role: PlayerRole) -> "TileState":
+        return TileState.A if role == PlayerRole.A else TileState.B
 
 
 class Tile(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     game_id: uuid.UUID = Field(foreign_key="game.id", ondelete="CASCADE")
-    index: int  # zero-based
-    x: float
-    y: float
+    row: int
+    col: int
     state: TileState = Field(sa_column=Column(Enum(TileState)), default=TileState.DEFAULT)
     question: str  # a list of strings separated by '|', the first one is the question, the rest are answers
 
     # entities
     game: Game = Relationship(back_populates="tiles")
+
+    @property
+    def layout(self):
+        return azk.TileLayout(self.row, self.col)
+
+    @property
+    def index(self):
+        return self.layout.id
+
+    @property
+    def x(self):
+        return self.layout.x
+
+    @property
+    def y(self):
+        return self.layout.y
 
     @property
     def question_text(self) -> str:
