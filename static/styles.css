@@ -243,6 +243,56 @@ section.quiz-list {
 }
 
 
+/* quiz page */
+.quiz {
+    display: flex;
+    align-items: flex-start;
+}
+
+.quiz section {
+    flex: 50%;
+    margin: 1rem;
+    border: 1px solid #404040;
+    border-radius: 8px;
+    padding: 1rem;
+    background-color: #fdf8f0;
+    box-shadow: 3px 3px 5px rgb(141, 141, 141);
+}
+
+.question-list ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.question-list ul li {
+    border-top: 1px solid #404040;
+    padding: 0.3rem;
+    cursor: pointer;
+}
+
+.question-list ul li.selected {
+    background-color: #b9ecb0;
+}
+
+.answer-list ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.answer-list ul li {
+    border-top: 1px solid #404040;
+    padding: 0.3rem;
+}
+
+li.new_answer_row {
+    color: #808080;
+    cursor: pointer;
+}
+
+.answer-list ul :last-child {
+    border-bottom: 1px solid #404040;
+}
+
 /* room page */
 .room-information-container,
 .room-dynamic-content {

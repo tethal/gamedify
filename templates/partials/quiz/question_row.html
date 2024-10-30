@@ -1,0 +1,7 @@
+<li hx-post="{{ url_for('quiz_select_question', quiz_id=quiz.id, question_id=question.id) }}"
+    hx-target=".quiz"
+    hx-swap="outerHTML"
+    class="{{ 'selected' if question == selected_question }}"
+>
+    {{ question.text }}
+</li>

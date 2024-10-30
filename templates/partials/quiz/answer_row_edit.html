@@ -1,0 +1,23 @@
+<li class="answer_row_edit" hx-target="this" hx-swap="outerHTML">
+    <input
+            type="text"
+            name="answer_text"
+            value="{{ answer.text }}"
+            placeholder="{{ answer.text }}"
+            autofocus
+            onfocus="this.select();"
+    />
+    <button
+            hx-patch="{{ url_for('answer_row_patch', answer_id=answer.id) }}"
+            hx-include="[name='answer_text']"
+            hx-trigger="click, keyup[key=='Enter'] from:[name='answer_text']"
+    >
+        ok
+    </button>
+    <button
+            hx-get="{{ url_for('answer_row_get', answer_id=answer.id) }}"
+            hx-trigger="click, click from:.answer-list-row, keyup[key=='Escape'] from:[name='answer_text']"
+    >
+        zrušit
+    </button>
+</li>
