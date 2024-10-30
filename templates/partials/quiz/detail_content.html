@@ -5,6 +5,9 @@
             {% for question in quiz.questions %}
                 {% include 'partials/quiz/question_row.html' %}
             {% endfor %}
+            {% if editable %}
+                {% include "partials/quiz/new_question_row.html" %}
+            {% endif %}
         </ul>
     </section>
     <section class="answer-list">

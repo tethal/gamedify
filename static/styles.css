@@ -267,11 +267,23 @@ section.quiz-list {
 .question-list ul li {
     border-top: 1px solid #404040;
     padding: 0.3rem;
+}
+
+.question-list ul li span {
     cursor: pointer;
 }
 
 .question-list ul li.selected {
     background-color: #b9ecb0;
+}
+
+.question-list ul:last-child {
+    border-bottom: 1px solid #404040;
+}
+
+li.new_question_row {
+    color: #808080;
+    cursor: pointer;
 }
 
 .answer-list ul {
@@ -289,7 +301,7 @@ li.new_answer_row {
     cursor: pointer;
 }
 
-.answer-list ul :last-child {
+.answer-list ul:last-child {
     border-bottom: 1px solid #404040;
 }
 

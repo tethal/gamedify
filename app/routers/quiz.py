@@ -36,6 +36,17 @@ async def get_selected_question(quiz: Annotated[Quiz, Depends(get_quiz)],
         return selected_question
 
 
+async def get_question(question_id: uuid.UUID,
+                       db: Annotated[Session, Depends(get_db)],
+                       user: Annotated[User, Depends(current_user)]):
+    question = db.exec(select(Question).where(Question.id == question_id)).one_or_none()
+    if not question:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    if question.quiz.owner != user and not question.quiz.is_public:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+    return question
+
+
 async def get_answer(answer_id: uuid.UUID,
                      db: Annotated[Session, Depends(get_db)],
                      user: Annotated[User, Depends(current_user)]):
@@ -62,10 +73,131 @@ async def quiz_root(request: Request,
     return templates.TemplateResponse("quiz/main.html", context)
 
 
+@router.get("/question_row_edit/{question_id}", response_class=HTMLResponse)
+async def question_row_edit(request: Request,
+                            question: Annotated[Question, Depends(get_question)],
+                            selected_question: Annotated[Question | None, Depends(get_selected_question_no_check)],
+                            user: Annotated[User, Depends(current_user)]):
+    """Show a form to edit an existing question."""
+    if question.quiz.owner != user and not question.quiz.is_public:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+    context = {"request": request, "question": question, "selected_question": selected_question}
+    return templates.TemplateResponse("partials/quiz/question_row_edit.html", context)
+
+
+@router.patch("/question_row/{question_id}", response_class=HTMLResponse)
+async def question_row_patch(request: Request,
+                             question_text: Annotated[str, Form()],
+                             question: Annotated[Question, Depends(get_question)],
+                             db: Annotated[Session, Depends(get_db)],
+                             user: Annotated[User, Depends(current_user)],
+                             selected_question: Annotated[Question | None, Depends(get_selected_question_no_check)]):
+    """Update an existing answer."""
+    if question.quiz.owner != user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+    question.text = question_text
+    db.add(question)
+    db.commit()
+    context = {"request": request,
+               "quiz": question.quiz,
+               "editable": question.quiz.owner == user,
+               "selected_question": selected_question}
+    return templates.TemplateResponse("partials/quiz/detail_content.html", context)
+
+
+@router.get("/question_row/{question_id}", response_class=HTMLResponse)
+async def question_row_get(request: Request,
+                           question: Annotated[Question, Depends(get_question)],
+                           user: Annotated[User, Depends(current_user)],
+                           selected_question: Annotated[Question | None, Depends(get_selected_question_no_check)]):
+    """Show an existing question, used when cancelling an edit."""
+    if question.quiz.owner != user and not question.quiz.is_public:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+    context = {"request": request,
+               "quiz": question.quiz,
+               "question": question,
+               "editable": question.quiz.owner == user,
+               "selected_question": selected_question
+               }
+    return templates.TemplateResponse("partials/quiz/question_row.html", context)
+
+
+@router.delete("/question_row/{question_id}", response_class=HTMLResponse)
+async def question_row_delete(
+        request: Request,
+        question: Annotated[Question, Depends(get_question)],
+        db: Annotated[Session, Depends(get_db)],
+        user: Annotated[User, Depends(current_user)],
+        selected_question: Annotated[Question | None, Depends(get_selected_question_no_check)]):
+    """Delete an existing question."""
+    quiz = question.quiz
+    if quiz.owner != user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+    db.delete(question)
+    db.commit()
+    if selected_question and selected_question.id == question.id:
+        selected_question = None
+    context = {"request": request,
+               "quiz": quiz,
+               "editable": quiz.owner == user,
+               "selected_question": selected_question}
+    response = templates.TemplateResponse("partials/quiz/detail_content.html", context)
+    if selected_question:
+        response.set_cookie("selected_question_id", value=str(selected_question.id), expires=259200,
+                            secure=True, httponly=True, samesite="lax")
+    else:
+        response.delete_cookie("selected_question_id")
+    return response
+
+
+@router.get("/new_question_row/{quiz_id}", response_class=HTMLResponse)
+async def new_question_row(request: Request,
+                           quiz: Annotated[Quiz, Depends(get_quiz)]):
+    """Show the link for creating a new question, used when cancelling the creation of a new question."""
+    context = {"request": request, "quiz": quiz}
+    return templates.TemplateResponse("partials/quiz/new_question_row.html", context)
+
+
+@router.post("/new_question_row/{quiz_id}", response_class=HTMLResponse)
+async def new_question_row_post(request: Request,
+                                quiz: Annotated[Quiz, Depends(get_quiz)],
+                                question_text: Annotated[str, Form()],
+                                db: Annotated[Session, Depends(get_db)],
+                                user: Annotated[User, Depends(current_user)]):
+    """Create a new question."""
+    if quiz.owner != user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+    q = Question(text=question_text, quiz_id=quiz.id)
+    db.add(q)
+    db.commit()
+    context = {"request": request,
+               "quiz": quiz,
+               "editable": quiz.owner == user,
+               "selected_question": q}
+    response = templates.TemplateResponse("partials/quiz/detail_content.html", context)
+    response.set_cookie("selected_question_id", value=str(q.id), expires=259200,
+                        secure=True, httponly=True, samesite="lax")
+    return response
+
+
+@router.get("/new_question_row_edit/{quiz_id}", response_class=HTMLResponse)
+async def new_question_row_edit(request: Request,
+                                quiz: Annotated[Quiz, Depends(get_quiz)],
+                                user: Annotated[User, Depends(current_user)]):
+    """Show the form for creating a new question."""
+    if quiz.owner != user and not quiz.is_public:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+    context = {"request": request, "quiz": quiz}
+    return templates.TemplateResponse("partials/quiz/new_question_row_edit.html", context)
+
+
 @router.get("/answer_row_edit/{answer_id}", response_class=HTMLResponse)
 async def answer_row_edit(request: Request,
-                          answer: Annotated[Answer, Depends(get_answer)]):
+                          answer: Annotated[Answer, Depends(get_answer)],
+                          user: Annotated[User, Depends(current_user)]):
     """Show a form to edit an existing answer."""
+    if answer.question.quiz.owner != user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
     context = {"request": request, "answer": answer}
     return templates.TemplateResponse("partials/quiz/answer_row_edit.html", context)
 
@@ -91,6 +223,8 @@ async def answer_row_get(request: Request,
                          answer: Annotated[Answer, Depends(get_answer)],
                          user: Annotated[User, Depends(current_user)]):
     """Show an existing answer, used when cancelling an edit."""
+    if answer.question.quiz.owner != user and not answer.question.quiz.is_public:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
     context = {"request": request, "answer": answer, "editable": answer.question.quiz.owner == user}
     return templates.TemplateResponse("partials/quiz/answer_row.html", context)
 
@@ -124,6 +258,8 @@ async def new_answer_row_post(request: Request,
     """Create a new answer."""
     if not selected_question:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+    if selected_question.quiz.owner != user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
     a = Answer(text=answer_text, question_id=selected_question.id)
     db.add(a)
     db.commit()
@@ -148,6 +284,10 @@ async def quiz_detail(request: Request,
                       user: Annotated[User, Depends(current_user)],
                       selected_question: Annotated[Question | None, Depends(get_selected_question)]):
     """Show the details of a quiz, including all questions and answers."""
+    if quiz.owner != user and not quiz.is_public:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+    if not selected_question and quiz.questions:
+        selected_question = quiz.questions[0]
     context = {"request": request,
                "quiz": quiz,
                "editable": quiz.owner == user,
@@ -161,6 +301,8 @@ async def quiz_select_question(request: Request,
                                question_id: uuid.UUID,
                                user: Annotated[User, Depends(current_user)]):
     """Select a question in the quiz, showing all its answers."""
+    if quiz.owner != user and not quiz.is_public:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
     question = next((q for q in quiz.questions if q.id == question_id), None)
     if not question:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
