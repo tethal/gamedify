@@ -105,6 +105,60 @@ async def new_quiz_row(request: Request):
     return templates.TemplateResponse("partials/quiz/new_quiz_row.html", context)
 
 
+@router.delete("/quiz_row/{quiz_id}", response_class=HTMLResponse)
+async def quiz_row_delete(
+        quiz: Annotated[Quiz, Depends(get_quiz)],
+        db: Annotated[Session, Depends(get_db)],
+        user: Annotated[User, Depends(current_user)]):
+    """Delete an existing quiz."""
+    if quiz.owner != user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+    db.delete(quiz)
+    db.commit()
+    return ""
+
+
+@router.get("/quiz_row_edit/{quiz_id}", response_class=HTMLResponse)
+async def quiz_row_edit(request: Request,
+                        quiz: Annotated[Quiz, Depends(get_quiz)],
+                        user: Annotated[User, Depends(current_user)]):
+    """Show a form to edit the name of a quiz."""
+    if quiz.owner != user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+    context = {"request": request, "quiz": quiz}
+    return templates.TemplateResponse("partials/quiz/quiz_row_edit.html", context)
+
+
+@router.get("/quiz_row/{quiz_id}", response_class=HTMLResponse)
+async def quiz_row_get(request: Request,
+                       db: Annotated[Session, Depends(get_db)],
+                       quiz: Annotated[Quiz, Depends(get_quiz)],
+                       user: Annotated[User, Depends(current_user)]):
+    """Show an existing quiz name, used when cancelling an edit."""
+    if quiz.owner != user and not quiz.is_public:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+    room = db.exec(select(Room).where(and_(Room.quiz_id == quiz.id, Room.owner == user))).one_or_none()
+    context = {"request": request, "quiz": quiz, "room": room}
+    return templates.TemplateResponse("partials/quiz/quiz_row.html", context)
+
+
+@router.patch("/quiz_row/{quiz_id}", response_class=HTMLResponse)
+async def quiz_row_patch(request: Request,
+                         quiz_name: Annotated[str, Form()],
+                         quiz: Annotated[Quiz, Depends(get_quiz)],
+                         db: Annotated[Session, Depends(get_db)],
+                         user: Annotated[User, Depends(current_user)]):
+    """Update an existing quiz name."""
+    if quiz.owner != user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+    quiz.name = quiz_name
+    db.add(quiz)
+    db.commit()
+    room = db.exec(select(Room).where(and_(Room.quiz_id == quiz.id, Room.owner == user))).one_or_none()
+    context = {"request": request, "quiz": quiz, "room": room}
+    return templates.TemplateResponse("partials/quiz/quiz_row.html", context)
+
+
 @router.get("/question_row_edit/{question_id}", response_class=HTMLResponse)
 async def question_row_edit(request: Request,
                             question: Annotated[Question, Depends(get_question)],

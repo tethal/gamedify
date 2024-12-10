@@ -11,7 +11,7 @@
             hx-post="{{ url_for('new_quiz_row_post') }}"
             hx-include="[name='quiz_name']"
             hx-target=".quizzes table"
-            hx-trigger="click, keyup[key=='Enter'] from:[name='question_text']"
+            hx-trigger="click, keyup[key=='Enter'] from:[name='quiz_name']"
             hx-swap="outerHTML"
     >
         ok

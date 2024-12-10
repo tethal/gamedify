@@ -1,0 +1,25 @@
+<tr hx-target="this" hx-swap="outerHTML">
+    <td>{{ quiz.name }}</td>
+    <td>
+        <a href="#"
+                hx-get="{{ url_for('quiz_row_edit', quiz_id=quiz.id) }}"
+                hx-trigger="click"
+        >
+            přejmenovat
+        </a>
+        <a href="#"
+                hx-delete="{{ url_for('quiz_row_delete', quiz_id=quiz.id) }}"
+                hx-confirm="Opravdu smazat celý kvíz včetně všech otázek a odpovědí?"
+                hx-trigger="click"
+        >
+            smazat
+        </a>
+
+        <a href="{{ url_for('quiz_detail', quiz_id=quiz.id) }}">zobrazit otázky</a>
+        {% if room %}
+        <a href="{{ url_for('room_root', room_code=room.code) }}">otevřená místnost</a>
+        {% else %}
+        <a href="{{ url_for('room_root', room_code='123') }}">otevřít místnost</a>
+        {% endif %}
+    </td>
+</tr>
