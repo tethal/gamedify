@@ -45,7 +45,7 @@ class Question(SQLModel, table=True):
 
     # entities
     quiz: Quiz = Relationship(back_populates="questions")
-    answers: list["Answer"] = Relationship(back_populates="question")
+    answers: list["Answer"] = Relationship(back_populates="question", cascade_delete=True)
 
 
 class Answer(SQLModel, table=True):

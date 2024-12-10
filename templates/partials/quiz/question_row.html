@@ -1,0 +1,26 @@
+<li class="question-list-row{{ ' selected' if question == selected_question }}">
+    <span
+            hx-post="{{ url_for('quiz_select_question', quiz_id=quiz.id, question_id=question.id) }}"
+            hx-target=".quiz"
+            hx-swap="outerHTML">
+        {{ question.text }}
+    </span>
+    {% if editable %}
+        <button
+                hx-get="{{ url_for('question_row_edit', question_id=question.id) }}"
+                hx-trigger="click"
+                hx-target="closest li"
+                hx-swap="outerHTML"
+        >
+            upravit
+        </button>
+        <button
+                hx-delete="{{ url_for('question_row_delete', question_id=question.id) }}"
+                hx-trigger="click"
+                hx-target=".quiz"
+                hx-swap="outerHTML"
+        >
+            smazat
+        </button>
+    {% endif %}
+</li>

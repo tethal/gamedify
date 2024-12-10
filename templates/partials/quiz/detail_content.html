@@ -1,0 +1,26 @@
+<main class="quiz">
+    <section class="question-list">
+        <h2>{{ quiz.name }}</h2>
+        <ul>
+            {% for question in quiz.questions %}
+                {% include 'partials/quiz/question_row.html' %}
+            {% endfor %}
+            {% if editable %}
+                {% include "partials/quiz/new_question_row.html" %}
+            {% endif %}
+        </ul>
+    </section>
+    <section class="answer-list">
+        {% if selected_question %}
+            <h2>{{ selected_question.text }}</h2>
+            <ul>
+                {% for answer in selected_question.answers %}
+                    {% include 'partials/quiz/answer_row.html' %}
+                {% endfor %}
+                {% if editable %}
+                    {% include "partials/quiz/new_answer_row.html" %}
+                {% endif %}
+            </ul>
+        {% endif %}
+    </section>
+</main>
