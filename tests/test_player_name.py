@@ -8,9 +8,9 @@ class PlayPage:
     def __init__(self, page: Page):
         page.goto("/play/123-456")
         self.page = page
-        self.player_name = self.page.get_by_label("Zadej svou přezdívku:")
+        self.player_name = self.page.get_by_label("Zadej svoji přezdívku:")
         self.enter_button = self.page.get_by_role("button", name="Vstoupit")
-        self.wait_for_game_to_start = self.page.get_by_text(re.compile(r"Hello, .*, wait for the game to start."))
+        self.wait_for_game_to_start = self.page.get_by_text(re.compile(r"Ahoj .*, počkej, než začne hra"))
 
 
 class TestSetPlayerNameForm:
@@ -56,20 +56,20 @@ def test_player_reject_name(page: Page, room: Room):
     play = PlayPage(page)
     play.player_name.fill("Alice")
     play.enter_button.click()
-    expect(room.page.get_by_text("Alice -")).to_be_visible()
+    expect(room.page.get_by_text("Alice")).to_be_visible()
     expect(play.player_name).not_to_be_visible()
-    r = room.page.get_by_text("Alice -").locator("a", has_text="reject name")
+    r = room.page.get_by_text("Alice").locator("a", has_text="❌")
     expect(r).to_be_visible()
     r.click()
     expect(play.player_name).to_be_visible()
-    expect(room.page.get_by_text("Alice -")).not_to_be_visible()
+    expect(room.page.get_by_text("Alice")).not_to_be_visible()
 
 
 def test_player_disconnect(page: Page, room: Room):
     play = PlayPage(page)
     play.player_name.fill("Alice")
     play.enter_button.click()
-    expect(room.page.get_by_text("Alice -")).to_be_visible()
+    expect(room.page.get_by_text("Alice")).to_be_visible()
     expect(play.player_name).not_to_be_visible()
     page.goto("/")
-    expect(room.page.get_by_text("Alice -")).not_to_be_visible()
+    expect(room.page.get_by_text("Alice")).not_to_be_visible()
