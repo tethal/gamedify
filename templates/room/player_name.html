@@ -1,0 +1,5 @@
+{% if player.name %}
+{{ player.name }}&nbsp;<a href="#" ws-send hx-vals='{"action": "reject_name", "player_id": "{{ player.id }}"}' title="odmítnout jméno">❌</a>
+{% else %}
+(jméno nezadáno)
+{% endif %}

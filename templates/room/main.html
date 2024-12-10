@@ -1,26 +1,26 @@
-{% extends "base.html" %} 
+{% extends "base.html" %}
 
 {% block header %}
 <header>
     {% include 'partials/header_admin.html' %}
 </header>
-{% endblock %} 
+{% endblock %}
 
 {% block content %}
 <main class="room">
     <header class="room-information">
         <div class="room-information-container">
             <div class="room-information-left">
-                <header><strong>Místnost:</strong> {{ room.code }}</header>
                 <p><strong>Kvíz:</strong> {{ room.quiz.name }}</p>
-                <p><strong>Vytvořil:</strong> {{ room.owner.username }}</p>
+                <p><strong>Odkaz:</strong> <a href="{{ url }}">{{ url }}</a></p>
             </div>
             <div class="room-information-right">
-                <p class="room-link">{{ url_for('play_root', room_code=room.code) }}</p>
+                <p class="room-link">{{ room.code }}</p>
+                {{ qrcode|safe }}
             </div>
         </div>
     </header>
-    
+
     <section class="room-dynamic-content">
         <div hx-ext="ws" ws-connect="/room/ws/{{ room.code }}">
             <div id="room-content">
