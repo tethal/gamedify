@@ -5,9 +5,9 @@
         <div class="room-games-container">
             {% for game in games %}
             <div>
-                {% with player=game.player_a %}{% include "room/player_name.html" %}{% endwith %}<br />
+                {% with player=game.player_a %}{% include "partials/room/player_name.html" %}{% endwith %}<br />
                 vs<br />
-                {% with player=game.player_b %}{% include "room/player_name.html" %}{% endwith %}
+                {% with player=game.player_b %}{% include "partials/room/player_name.html" %}{% endwith %}
             </div>
             {% endfor %}
         </div>
@@ -21,7 +21,7 @@
         <table>
             {% for player in waiting %}
             <tr>
-                <td>{% include "room/player_name.html" %}</td>
+                <td>{% include "partials/room/player_name.html" %}</td>
                 <td></td>
             </tr>
             {% endfor %}

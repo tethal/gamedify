@@ -6,21 +6,25 @@
         {{ question.text }}
     </span>
     {% if editable %}
-        <button
+        <a
+                href="#"
                 hx-get="{{ url_for('question_row_edit', question_id=question.id) }}"
                 hx-trigger="click"
                 hx-target="closest li"
                 hx-swap="outerHTML"
+                title="upravit"
         >
-            upravit
-        </button>
-        <button
+            ✎
+        </a>
+        <a
+                href="#"
                 hx-delete="{{ url_for('question_row_delete', question_id=question.id) }}"
                 hx-trigger="click"
                 hx-target=".quiz"
                 hx-swap="outerHTML"
+                title="smazat"
         >
-            smazat
-        </button>
+            🗑
+        </a>
     {% endif %}
 </li>

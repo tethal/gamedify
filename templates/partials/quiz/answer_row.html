@@ -1,17 +1,21 @@
 <li class="answer-list-row" hx-target="this" hx-swap="outerHTML">
     {{ answer.text }}
     {% if editable %}
-        <button
+        <a
+                href="#"
                 hx-get="{{ url_for('answer_row_edit', answer_id=answer.id) }}"
                 hx-trigger="click"
+                title="upravit"
         >
-            upravit
-        </button>
-        <button
+            ✎
+        </a>
+        <a
+                href="#"
                 hx-delete="{{ url_for('answer_row_delete', answer_id=answer.id) }}"
                 hx-trigger="click"
+                title="smazat"
         >
-            smazat
-        </button>
+            🗑
+        </a>
     {% endif %}
 </li>

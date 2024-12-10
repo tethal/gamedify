@@ -6,21 +6,25 @@
             placeholder="text odpovědi"
             autofocus
     />
-    <button
+    <a
+            href="#"
             hx-post="{{ url_for('new_answer_row_post') }}"
             hx-include="[name='answer_text']"
             hx-target=".quiz"
             hx-trigger="click, keyup[key=='Enter'] from:[name='answer_text']"
             hx-swap="outerHTML"
+            title="vytvořit"
     >
-        ok
-    </button>
-    <button
+        ✅
+    </a>
+    <a
+            href="#"
             hx-get="{{ url_for('new_answer_row') }}"
             hx-target=".new-answer-row-edit"
             hx-trigger="click, click from:.answer-list-row, keyup[key=='Escape'] from:[name='answer_text']"
             hx-swap="outerHTML"
+            title="zrušit"
     >
-        zrušit
-    </button>
+        ❌
+    </a>
 </li>
