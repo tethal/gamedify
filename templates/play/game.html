@@ -1,77 +1,173 @@
+{% set my_role = 'A' if player == game.player_a else 'B' %}
+{% set opponent = game.get_opponent(player) %}
+{% set on_turn = player == game.player_on_turn and game.is_player_active(opponent) and not game.is_over %}
 <div id="game-content">
+    <div class="board-container">
+        <div class="player-container">
+            <div class="player-a {{ 'on_turn' if game.player_on_turn_role == PlayerRole.A }}">
+                {{ game.player_a.name }}
+            </div>
+            {% if on_turn and not game.selected_tile %}<span>Táhni!</span>{% endif %}
+            <div class="player-b {{ 'on_turn' if game.player_on_turn_role == PlayerRole.B }}">
+                {{ game.player_b.name }}
+            </div>
+        </div>
 
-    <svg viewBox="{{ board_layout.view_box }}">
-        <style>
-            text {
-                user-select: none;
-            }
+        {# TODO: modal window, the player can either click the button or close the tab #}
+        {% if game.is_over %}
+            <p>Konec hry, vítězí {{ game.player_on_turn.name }}.</p>
+            <button ws-send hx-vals='{"action": "start_new_game"}'>Začít novou hru</button>
+        {% elif not game.is_player_active(opponent) %}
+            <p>{{ opponent.name }} je offline. Čekej, až se připojí, nebo můžeš začít novou hru s někým jiným.</p>
+            <button ws-send hx-vals='{"action": "start_new_game"}'>Začít novou hru</button>
+        {% endif %}
 
-            .rotate {
-                transition: transform 0.5s ease, stroke 2s ease;
-                cursor: pointer;
-            }
+        <svg viewBox="{{ game.board_view_box }}">
+            <style>
+                .tile text {
+                    user-select: none;
+                    font-weight: bold;
+                    text-anchor: middle;
+                    dominant-baseline: middle;
+                }
 
-            .rotate:hover {
-                transform: rotate(10deg);
-            }
+                .tile polygon {
+                    stroke-width: 1;
+                    filter: url(#dropshadow);
+                }
 
-            .rotate:hover polygon {
-                stroke: url(#strokeGradientGreen);
-            }
-        </style>
+                .state-DEFAULT polygon {
+                    fill: url(#fillGradientDefault);
+                    stroke: url(#strokeGradientDefault);
+                }
 
-        <defs>
-            <linearGradient id="fillGradient" x1="50%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" style="stop-color:gray"/>
-                <stop offset="30%" style="stop-color:white"/>
-                <stop offset="100%" style="stop-color:white"/>
-            </linearGradient>
+                .state-DEFAULT text {
+                    fill: #606060;
+                }
 
-            <linearGradient id="strokeGradient" x1="0%" y1="50%" x2="25%" y2="0%">
-                <stop offset="0%" style="stop-color:gray"/>
-                <stop offset="60%" style="stop-color:white"/>
-                <stop offset="100%" style="stop-color:white"/>
-            </linearGradient>
+                .state-SELECTED polygon {
+                    fill: url(#fillGradientSelected);
+                    stroke: url(#strokeGradientSelected);
+                }
 
-            <linearGradient id="fillGradientGreen" x1="50%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" style="stop-color: #696969"/>
-                <stop offset="30%" style="stop-color: #b9ecb0"/>
-                <stop offset="100%" style="stop-color: #b9ecb0"/>
-            </linearGradient>
+                .state-SELECTED text {
+                    fill: #d0d0d0;
+                }
 
-            <linearGradient id="strokeGradientGreen" x1="0%" y1="50%" x2="25%" y2="0%">
-                <stop offset="0%" style="stop-color:#696969"/>
-                <stop offset="60%" style="stop-color:#b9ecb0"/>
-                <stop offset="100%" style="stop-color:#b9ecb0"/>
-            </linearGradient>
+                .state-A polygon {
+                    fill: url(#fillGradientA);
+                    stroke: url(#strokeGradientA);
+                }
 
-            <linearGradient id="strokeGradient2" x1="0%" y1="50%" x2="25%" y2="0%">
-                <stop offset="0%" style="stop-color:red"/>
-                <stop offset="60%" style="stop-color:white"/>
-                <stop offset="100%" style="stop-color:white"/>
-            </linearGradient>
+                .state-A text {
+                    fill: #606060;
+                }
 
-            <filter id="dropshadow" height="130%">
-                <feDropShadow dx="0.1" dy="1" stdDeviation="1" flood-opacity="0.2"/>
-            </filter>
-        </defs>
+                .state-B polygon {
+                    fill: url(#fillGradientB);
+                    stroke: url(#strokeGradientB);
+                }
 
-        {% for tile in board_layout.tiles %}
-            <g transform="translate({{ tile.x }}, {{ tile.y }})">
-                <g class="rotate">
-                    <polygon
-                            points="8.14,4.7 0,9.4 -8.14,4.7 -8.14,-4.7 0,-9.4 8.14,-4.7"
-                            fill="url(#fillGradient)"
-                            stroke="url(#strokeGradient)"
-                            stroke-width="1"
-                            filter="url(#dropshadow)"/>
-                    <text x="0" y="1" font-weight="bold" text-anchor="middle" dominant-baseline="middle"
-                          font-size="7.52" fill="gray">{{ tile.id + 1 }}
-                    </text>
+                .state-B text {
+                    fill: #606060;
+                }
+
+                .clickable {
+                    transition: transform 0.5s ease, stroke 2s ease;
+                    cursor: pointer;
+                }
+
+                .clickable:hover {
+                    transform: rotate(10deg);
+                }
+
+                .clickable.clickable-A:hover polygon {
+                    stroke: url(#strokeGradientA);
+                }
+
+                .clickable.clickable-B:hover polygon {
+                    stroke: url(#strokeGradientB);
+                }
+            </style>
+
+            <defs>
+                <linearGradient id="fillGradientDefault" x1="50%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:gray"/>
+                    <stop offset="30%" style="stop-color:white"/>
+                    <stop offset="100%" style="stop-color:white"/>
+                </linearGradient>
+
+                <linearGradient id="strokeGradientDefault" x1="0%" y1="50%" x2="25%" y2="0%">
+                    <stop offset="0%" style="stop-color:gray"/>
+                    <stop offset="60%" style="stop-color:white"/>
+                    <stop offset="100%" style="stop-color:white"/>
+                </linearGradient>
+
+                <linearGradient id="fillGradientSelected" x1="50%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#404040"/>
+                    <stop offset="30%" style="stop-color:#606060"/>
+                    <stop offset="100%" style="stop-color:#606060"/>
+                </linearGradient>
+
+                <linearGradient id="strokeGradientSelected" x1="0%" y1="50%" x2="25%" y2="0%">
+                    <stop offset="0%" style="stop-color:#404040"/>
+                    <stop offset="60%" style="stop-color:#606060"/>
+                    <stop offset="100%" style="stop-color:#606060"/>
+                </linearGradient>
+
+                <linearGradient id="fillGradientA" x1="50%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color: #696969"/>
+                    <stop offset="30%" style="stop-color: #b9ecb0"/>
+                    <stop offset="100%" style="stop-color: #b9ecb0"/>
+                </linearGradient>
+
+                <linearGradient id="strokeGradientA" x1="0%" y1="50%" x2="25%" y2="0%">
+                    <stop offset="0%" style="stop-color:#696969"/>
+                    <stop offset="60%" style="stop-color:#b9ecb0"/>
+                    <stop offset="100%" style="stop-color:#b9ecb0"/>
+                </linearGradient>
+
+                <linearGradient id="fillGradientB" x1="50%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color: #696969"/>
+                    <stop offset="30%" style="stop-color: #E3B0EC"/>
+                    <stop offset="100%" style="stop-color: #E3B0EC"/>
+                </linearGradient>
+
+                <linearGradient id="strokeGradientB" x1="0%" y1="50%" x2="25%" y2="0%">
+                    <stop offset="0%" style="stop-color:#696969"/>
+                    <stop offset="60%" style="stop-color:#E3B0EC"/>
+                    <stop offset="100%" style="stop-color:#E3B0EC"/>
+                </linearGradient>
+
+                <filter id="dropshadow" height="130%">
+                    <feDropShadow dx="0.1" dy="1" stdDeviation="1" flood-opacity="0.2"/>
+                </filter>
+            </defs>
+
+            {% for tile in game.tiles %}
+                <g transform="translate({{ tile.x }}, {{ tile.y }})"
+                   class="tile state-{{ tile.state.name }}"
+                        {% if on_turn %}
+                   ws-send hx-vals='{"action": "tile_click", "tile": {{ tile.index }} }'
+                        {% endif %}
+                >
+                    <g class="{{ 'clickable' if on_turn and not game.selected_tile and tile.state == TileState.DEFAULT }} clickable-{{ my_role }}">
+                        <polygon points="8.14,4.7 0,9.4 -8.14,4.7 -8.14,-4.7 0,-9.4 8.14,-4.7"/>
+                        <text x="0" y="1" font-size="7.5">{{ tile.index + 1 }}</text>
+                    </g>
                 </g>
-            </g>
-        {% endfor %}
+            {% endfor %}
 
-    </svg>
-
+        </svg>
+        {% if game.selected_tile %}
+            Otázka: {{ game.selected_tile.question_text }}
+            {% if on_turn %}
+                <form ws-send hx-vals='{"action": "submit_answer"}'>
+                    <input type="text" name="answer" placeholder="Odpověď" required/>
+                    <input type="submit" value="Odeslat"/>
+                    <input type="button" value="Nevím" ws-send hx-vals='{"action": "no_answer"}'/>
+                </form>
+            {% endif %}
+        {% endif %}
+    </div>
 </div>

@@ -5,8 +5,8 @@ from fastapi import APIRouter, Cookie, Depends, Request, WebSocket
 from fastapi.responses import HTMLResponse
 
 from app.dependencies import Controller, ControllerFactory, get_event_bus, jinja_env, templates
+from app.model import PlayerRole, TileState
 from app.util import EventBus
-from app.util.azk import BoardLayout
 from app.util.ws_handler import WsHandler
 
 router = APIRouter(prefix="/play")
@@ -56,24 +56,36 @@ class PlayerWsHandler(WsHandler):
         else:
             template = 'play/game.html'
 
-        msg = jinja_env.get_template(template).render(
+        t = jinja_env.get_template(template)
+        t.globals['TileState'] = TileState
+        t.globals['PlayerRole'] = PlayerRole
+        msg = t.render(
             player=pc.player,
             room=pc.room,
             game=pc.game,
-            connection_id=str(pc.id),
-            board_layout=BoardLayout.from_max_tile_count(28)
+            connection_id=str(pc.id)
         )
         await self.send(msg)
 
     async def on_error(self, ctrl: Controller, exc: Exception):
         print(f'Player connection {self.connection_id} error: {exc}')
-        msg = jinja_env.get_template('play/error.html').render()
+        msg = jinja_env.get_template('play/error.html').render(exc=exc)
         await self.send(msg)
 
     async def on_receive(self, ctrl: Controller, msg):
         pc = ctrl.get_player_connection(self.connection_id)
         if msg['action'] == 'set_name':
             ctrl.set_player_name(pc.room, pc.player, msg['player_name'])
+        elif msg['action'] == 'tile_click':
+            ctrl.tile_click(pc, msg['tile'])
+        elif msg['action'] == 'submit_answer':
+            ctrl.submit_answer(pc, msg['answer'])
+        elif msg['action'] == 'no_answer':
+            ctrl.submit_answer(pc, None)
+        elif msg['action'] == 'start_new_game':
+            ctrl.start_new_game(pc)
+        else:
+            print("RECEIVED:", msg)
 
 
 @router.websocket("/ws/{connection_id}")

@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import math
-from typing import NamedTuple
+from typing import Generator, NamedTuple
+
+from app import model
 
 sqrt3 = math.sqrt(3)
 tile_size = 11
@@ -44,7 +46,6 @@ class TileLayout(NamedTuple):
 
 class BoardLayout(NamedTuple):
     rows: int
-    tiles: tuple[TileLayout, ...]
 
     @property
     def view_box(self) -> str:
@@ -54,8 +55,43 @@ class BoardLayout(NamedTuple):
         board_max_y = -tile_size
         return " ".join(str(i) for i in (board_min_x, board_max_y, board_width, board_height))
 
+    @property
+    def tiles(self) -> tuple[TileLayout, ...]:
+        return tuple(TileLayout(row, col) for row in range(self.rows) for col in range(row + 1))
+
     @staticmethod
     def from_max_tile_count(max_tile_count: int) -> BoardLayout:
         rows = triangular_inv(max_tile_count)
-        tiles = tuple(TileLayout(row, col) for row in range(rows) for col in range(row + 1))
-        return BoardLayout(rows, tiles)
+        return BoardLayout(rows)
+
+
+DIRS = (
+    (-1, -1),  # top left
+    (-1, 0),  # top right
+    (0, -1),  # left
+    (0, 1),  # right
+    (1, 0),  # bottom left
+    (1, 1),  # bottom right
+)
+
+
+def is_winner_move(game: model.Game, start_tile: model.Tile) -> bool:
+    visited = set()
+    tiles = {(t.row, t.col): t for t in game.tiles}
+
+    def neighbours(r, c) -> Generator[tuple[int, int], None, None]:
+        return ((r + dr, c + dc) for dr, dc in DIRS)
+
+    def visit(r, c):
+        tile = tiles.get((r, c), None)
+        if not tile or tile.state != start_tile.state or (r, c) in visited:
+            return
+        visited.add((r, c))
+        for nr, nc in neighbours(r, c):
+            visit(nr, nc)
+
+    visit(start_tile.row, start_tile.col)
+    left_edge = any(col == 0 for (_, col) in visited)
+    right_edge = any(col == row for row, col in visited)
+    bottom_edge = any(row == game.rows - 1 for row, _ in visited)
+    return left_edge and right_edge and bottom_edge
