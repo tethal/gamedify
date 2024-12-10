@@ -7,22 +7,20 @@
             <div class="player-a {{ 'on_turn' if game.player_on_turn_role == PlayerRole.A }}">
                 {{ game.player_a.name }}
             </div>
-            {% if on_turn and not game.selected_tile %}<span>Táhni!</span>{% endif %}
+            {% if on_turn %}
+                <span>Hraješ!</span> 
+            {% elif not on_turn and game.selected_tile %}
+                <span>Soupeř odpovídá...</span>
+            {% else %}
+                <span>Hraje soupeř, čekej...</span>
+            {% endif %}
             <div class="player-b {{ 'on_turn' if game.player_on_turn_role == PlayerRole.B }}">
                 {{ game.player_b.name }}
             </div>
         </div>
 
-        {# TODO: modal window, the player can either click the button or close the tab #}
-        {% if game.is_over %}
-            <p>Konec hry, vítězí {{ game.player_on_turn.name }}.</p>
-            <button ws-send hx-vals='{"action": "start_new_game"}'>Začít novou hru</button>
-        {% elif not game.is_player_active(opponent) %}
-            <p>{{ opponent.name }} je offline. Čekej, až se připojí, nebo můžeš začít novou hru s někým jiným.</p>
-            <button ws-send hx-vals='{"action": "start_new_game"}'>Začít novou hru</button>
-        {% endif %}
-
-        <svg viewBox="{{ game.board_view_box }}">
+        <div class="game-board">
+            <svg viewBox="{{ game.board_view_box }}">
             <style>
                 .tile text {
                     user-select: none;
@@ -158,16 +156,33 @@
                 </g>
             {% endfor %}
 
-        </svg>
+            </svg>
+        </div>
+
+        {# TODO: modal window, the player can either click the button or close the tab #}
+        {% if game.is_over %}
+            <div class="popup-new-game">
+                <p>Konec hry, vítězí {{ game.player_on_turn.name }}.</p>
+                <button ws-send hx-vals='{"action": "start_new_game"}'>Začít novou hru</button>
+            </div>
+            
+        {% elif not game.is_player_active(opponent) %}
+            <p>{{ opponent.name }} je offline. Čekej, až se připojí, nebo můžeš začít novou hru s někým jiným.</p>
+            <button ws-send hx-vals='{"action": "start_new_game"}'>Začít novou hru</button>
+        {% endif %}
+
         {% if game.selected_tile %}
-            Otázka: {{ game.selected_tile.question_text }}
-            {% if on_turn %}
-                <form ws-send hx-vals='{"action": "submit_answer"}'>
-                    <input type="text" name="answer" placeholder="Odpověď" required/>
-                    <input type="submit" value="Odeslat"/>
-                    <input type="button" value="Nevím" ws-send hx-vals='{"action": "no_answer"}'/>
-                </form>
-            {% endif %}
+            <div class="popup-question">
+                <div class="game-question">{{ game.selected_tile.question_text }}</div>
+                {% if on_turn %}
+                    <form class="answer" ws-send hx-vals='{"action": "submit_answer"}'>
+                        <input class="answer-text" type="text" name="answer" placeholder="Odpověď" required/>
+                        <input class="answer-yes" type="submit" value="Odeslat"/>
+                        <input class="answer-no" type="button" value="Nevím" ws-send hx-vals='{"action": "no_answer"}'/>
+                    </form>
+                {% endif %}
+            </div>
+            <div id="overlay"></div>
         {% endif %}
     </div>
 </div>
