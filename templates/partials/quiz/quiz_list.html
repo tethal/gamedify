@@ -1,0 +1,17 @@
+{% if quizzes_and_rooms %}
+<table>
+    {% for quiz, room in quizzes_and_rooms %}
+    <tr>
+        <td><a href="{{ url_for('quiz_detail', quiz_id=quiz.id) }}">{{ quiz.name }}</a></td>
+        {% if room %}
+        <td><a href="{{ url_for('room_root', room_code=room.code) }}">otevřená místnost</a></td>
+        {% else %}
+        <td></td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+    {% include "partials/quiz/new_quiz_row.html" %}
+</table>
+{% else %}
+<p>Nejsou zde žádné kvízy.</p>
+{% endif %}

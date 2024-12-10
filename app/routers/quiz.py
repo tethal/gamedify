@@ -58,6 +58,15 @@ async def get_answer(answer_id: uuid.UUID,
     return answer
 
 
+### Helpers ###
+async def load_quiz_list(db: Annotated[Session, Depends(get_db)],
+                         user: Annotated[User, Depends(current_user)]):
+    return (db.exec(select(Quiz, Room)
+                    .join(Room, isouter=True, onclause=and_(Room.quiz_id == Quiz.id, Room.owner == user))
+                    .where(or_(Quiz.is_public == True, Quiz.owner == user)))
+            .all())
+
+
 ### Routes ###
 
 @router.get("/", response_class=HTMLResponse)
@@ -65,12 +74,35 @@ async def quiz_root(request: Request,
                     db: Annotated[Session, Depends(get_db)],
                     user: Annotated[User, Depends(current_user)]):
     """Show all quizzes that are public or owned by the user. Also show rooms owned by the user."""
-    quizzes = (db.exec(select(Quiz, Room)
-                       .join(Room, isouter=True, onclause=and_(Room.quiz_id == Quiz.id, Room.owner == user))
-                       .where(or_(Quiz.is_public == True, Quiz.owner == user)))
-               .all())
-    context = {"request": request, "quizzes_and_rooms": quizzes}
+    context = {"request": request, "quizzes_and_rooms": await load_quiz_list(db, user)}
     return templates.TemplateResponse("quiz/main.html", context)
+
+
+@router.get("/new_quiz_row_edit", response_class=HTMLResponse)
+async def new_quiz_row_edit(request: Request):
+    """Show the form for creating a new quiz."""
+    context = {"request": request}
+    return templates.TemplateResponse("partials/quiz/new_quiz_row_edit.html", context)
+
+
+@router.post("/new_quiz_row", response_class=HTMLResponse)
+async def new_quiz_row_post(request: Request,
+                            quiz_name: Annotated[str, Form()],
+                            db: Annotated[Session, Depends(get_db)],
+                            user: Annotated[User, Depends(current_user)]):
+    """Create a new quiz."""
+    quiz = Quiz(name=quiz_name, owner=user)
+    db.add(quiz)
+    db.commit()
+    context = {"request": request, "quizzes_and_rooms": await load_quiz_list(db, user)}
+    return templates.TemplateResponse("partials/quiz/quiz_list.html", context)
+
+
+@router.get("/new_quiz_row", response_class=HTMLResponse)
+async def new_quiz_row(request: Request):
+    """Show the link for creating a new quiz, used when cancelling the creation of a new quiz."""
+    context = {"request": request}
+    return templates.TemplateResponse("partials/quiz/new_quiz_row.html", context)
 
 
 @router.get("/question_row_edit/{question_id}", response_class=HTMLResponse)

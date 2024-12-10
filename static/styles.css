@@ -343,6 +343,11 @@ form.answer input {
     box-shadow: 3px 3px 5px rgb(141, 141, 141);
 }
 
+.new-quiz-row {
+    color: #808080;
+    cursor: pointer;
+}
+
 .question-list ul {
     list-style-type: none;
     padding: 0;
