@@ -365,7 +365,7 @@ form.answer input {
     border-bottom: 1px solid #404040;
 }
 
-li.new_question_row {
+li.new-question-row {
     color: #808080;
     cursor: pointer;
 }
@@ -380,7 +380,7 @@ li.new_question_row {
     padding: 0.3rem;
 }
 
-li.new_answer_row {
+li.new-answer-row {
     color: #808080;
     cursor: pointer;
 }

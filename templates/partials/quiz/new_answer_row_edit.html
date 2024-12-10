@@ -1,4 +1,4 @@
-<li class="new_answer_row_edit">
+<li class="new-answer-row-edit">
     <input
             type="text"
             name="answer_text"
@@ -17,7 +17,7 @@
     </button>
     <button
             hx-get="{{ url_for('new_answer_row') }}"
-            hx-target=".new_answer_row_edit"
+            hx-target=".new-answer-row-edit"
             hx-trigger="click, click from:.answer-list-row, keyup[key=='Escape'] from:[name='answer_text']"
             hx-swap="outerHTML"
     >
