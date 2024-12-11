@@ -96,7 +96,7 @@ async def new_quiz_row_post(request: Request,
     quiz = Quiz(name=quiz_name, owner=user)
     db.add(quiz)
     db.commit()
-    context = {"request": request, "quizzes_and_rooms": await load_quiz_list(db, user)}
+    context = {"request": request, "user": user, "quizzes_and_rooms": await load_quiz_list(db, user)}
     return templates.TemplateResponse("partials/quiz/quiz_list.html", context)
 
 
@@ -140,7 +140,7 @@ async def quiz_row_get(request: Request,
     if quiz.owner != user and not quiz.is_public:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
     room = db.exec(select(Room).where(and_(Room.quiz_id == quiz.id, Room.owner == user))).one_or_none()
-    context = {"request": request, "quiz": quiz, "room": room}
+    context = {"request": request, "user": user, "quiz": quiz, "room": room}
     return templates.TemplateResponse("partials/quiz/quiz_row.html", context)
 
 
@@ -157,7 +157,7 @@ async def quiz_row_patch(request: Request,
     db.add(quiz)
     db.commit()
     room = db.exec(select(Room).where(and_(Room.quiz_id == quiz.id, Room.owner == user))).one_or_none()
-    context = {"request": request, "quiz": quiz, "room": room}
+    context = {"request": request, "user": user, "quiz": quiz, "room": room}
     return templates.TemplateResponse("partials/quiz/quiz_row.html", context)
 
 

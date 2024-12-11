@@ -18,12 +18,12 @@
             {% if room %}
             <a class="button-room-opened" href="{{ url_for('room_root', room_code=room.code) }}" title="Otevřená místnost">Otevřená místnost</a>
             {% elif quiz.questions|length >= 10 %}
-            <a href="{{ url_for('room_root', room_code='123') }}" title="Otevřít místnost">Otevřít místnost</a>
+            <a href="{{ url_for('room_create', quiz_id=quiz.id) }}" title="Otevřít místnost">Otevřít místnost</a>
             {% endif %}
 
             <a href="{{ url_for('quiz_detail', quiz_id=quiz.id) }}" title="Zobrazit otázky"><span class="fa fa-th-list"></span></a>
 
-            {% if quiz.owner == user %}
+            {% if quiz.owner == user and quiz.rooms|length == 0 %}
             <a href="#"
                 hx-delete="{{ url_for('quiz_row_delete', quiz_id=quiz.id) }}"
                 hx-confirm="Opravdu smazat celý kvíz včetně všech otázek a odpovědí?"

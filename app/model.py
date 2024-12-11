@@ -35,7 +35,7 @@ class Quiz(SQLModel, table=True):
     # entities
     rooms: list["Room"] = Relationship(back_populates="quiz", cascade_delete=False)
     owner: User = Relationship()
-    questions: list["Question"] = Relationship(back_populates="quiz")
+    questions: list["Question"] = Relationship(back_populates="quiz", cascade_delete=True)
 
 
 class Question(SQLModel, table=True):
