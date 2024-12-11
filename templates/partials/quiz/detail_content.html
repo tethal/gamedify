@@ -1,26 +1,30 @@
-<main class="quiz">
+<main class="quiz-questions">
     <section class="question-list">
         <h2>{{ quiz.name }}</h2>
-        <ul>
-            {% for question in quiz.questions %}
-                {% include 'partials/quiz/question_row.html' %}
-            {% endfor %}
-            {% if editable %}
-                {% include "partials/quiz/new_question_row.html" %}
-            {% endif %}
-        </ul>
+        <table>
+            <tbody>
+                {% for question in quiz.questions %}
+                    {% include 'partials/quiz/question_row.html' %}
+                {% endfor %}
+                {% if editable %}
+                    {% include "partials/quiz/new_question_row.html" %}
+                {% endif %}
+            </tbody>
+        </table>
     </section>
     <section class="answer-list">
         {% if selected_question %}
             <h2>{{ selected_question.text }}</h2>
-            <ul>
-                {% for answer in selected_question.answers %}
-                    {% include 'partials/quiz/answer_row.html' %}
-                {% endfor %}
-                {% if editable %}
-                    {% include "partials/quiz/new_answer_row.html" %}
+            <table>
+                <tbody>
+                    {% for answer in selected_question.answers %}
+                        {% include 'partials/quiz/answer_row.html' %}
+                    {% endfor %}
+                    {% if editable %}
+                        {% include "partials/quiz/new_answer_row.html" %}
                 {% endif %}
-            </ul>
+                </tbody>
+            </table>
         {% endif %}
     </section>
 </main>

@@ -1,30 +1,36 @@
-<li class="question-list-row{{ ' selected' if question == selected_question }}">
-    <span
-            hx-post="{{ url_for('quiz_select_question', quiz_id=quiz.id, question_id=question.id) }}"
-            hx-target=".quiz"
-            hx-swap="outerHTML">
-        {{ question.text }}
-    </span>
+<tr class="question-list-row{{ ' selected' if question == selected_question }}">
+    <td>
+        <span
+                hx-post="{{ url_for('quiz_select_question', quiz_id=quiz.id, question_id=question.id) }}"
+                hx-target=".quiz-questions"
+                hx-swap="outerHTML">
+            {{ question.text }}
+        </span>
+    </td>
+    <td class="buttons-column">
     {% if editable %}
-        <a
-                href="#"
-                hx-get="{{ url_for('question_row_edit', question_id=question.id) }}"
-                hx-trigger="click"
-                hx-target="closest li"
-                hx-swap="outerHTML"
-                title="upravit"
-        >
-            ✎
-        </a>
-        <a
-                href="#"
-                hx-delete="{{ url_for('question_row_delete', question_id=question.id) }}"
-                hx-trigger="click"
-                hx-target=".quiz"
-                hx-swap="outerHTML"
-                title="smazat"
-        >
-            🗑
-        </a>
+        <span class="buttons-container">
+            <a
+                    href="#"
+                    hx-get="{{ url_for('question_row_edit', question_id=question.id) }}"
+                    hx-trigger="click"
+                    hx-target="closest tr"
+                    hx-swap="outerHTML"
+                    title="Upravit"
+            >
+                <span class="fa fa-edit"></span>
+            </a>
+            <a
+                    href="#"
+                    hx-delete="{{ url_for('question_row_delete', question_id=question.id) }}"
+                    hx-trigger="click"
+                    hx-target=".quiz-questions"
+                    hx-swap="outerHTML"
+                    title="Smazat"
+            >
+                <span class="fa fa-trash" style="color: red"></span>
+            </a>
+        </span>
     {% endif %}
-</li>
+    </td>
+</tr>
