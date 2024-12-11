@@ -7,17 +7,21 @@
             autofocus
             onfocus="this.select();"
     />
-    <button
+    <a
+            href="#"
             hx-patch="{{ url_for('answer_row_patch', answer_id=answer.id) }}"
             hx-include="[name='answer_text']"
             hx-trigger="click, keyup[key=='Enter'] from:[name='answer_text']"
+            title="uložit"
     >
-        ok
-    </button>
-    <button
+        ✅
+    </a>
+    <a
+            href="#"
             hx-get="{{ url_for('answer_row_get', answer_id=answer.id) }}"
             hx-trigger="click, click from:.answer-list-row, keyup[key=='Escape'] from:[name='answer_text']"
+            title="zrušit"
     >
-        zrušit
-    </button>
+        ❌
+    </a>
 </li>

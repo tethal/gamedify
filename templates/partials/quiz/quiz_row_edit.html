@@ -1,0 +1,30 @@
+<tr class="quiz_row_edit" hx-target="this" hx-swap="outerHTML">
+    <td>
+    <input
+            type="text"
+            name="quiz_name"
+            value="{{ quiz.name }}"
+            placeholder="{{ quiz.name }}"
+            autofocus
+            onfocus="this.select();"
+    />
+    <a
+            href="#"
+            hx-patch="{{ url_for('quiz_row_patch', quiz_id=quiz.id) }}"
+            hx-include="[name='quiz_name']"
+            hx-trigger="click, keyup[key=='Enter'] from:[name='quiz_name']"
+            title="uložit"
+    >
+        ✅
+    </a>
+    <a
+            href="#"
+            hx-get="{{ url_for('quiz_row_get', quiz_id=quiz.id) }}"
+            hx-trigger="click, click from:.quizzes, keyup[key=='Escape'] from:[name='quiz_name']"
+            title="zrušit"
+    >
+        ❌
+    </a>
+    </td>
+    <td></td>
+</tr>

@@ -3,6 +3,8 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Request, WebSocket, status
 from fastapi.responses import HTMLResponse
+from qrcode import QRCode
+from qrcode.image.svg import SvgPathImage
 
 from app.dependencies import Controller, ControllerFactory, current_user, get_event_bus, jinja_env, templates
 from app.model import User
@@ -20,7 +22,12 @@ async def room_root(request: Request,
     room = ctrl.get_room(room_code)
     if room.owner != user:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
-    context = {"request": request, "room": room}
+    url = request.url_for('play_root', room_code=room.code)
+    qr = QRCode(image_factory=SvgPathImage)
+    qr.add_data(url)
+    qr.make(fit=True)
+    img = qr.make_image(attrib={'class': 'some-css-class'})
+    context = {"request": request, "room": room, "url": url, "qrcode": img.to_string(encoding='unicode')}
     return templates.TemplateResponse("room/main.html", context)
 
 

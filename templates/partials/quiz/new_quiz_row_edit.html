@@ -1,0 +1,33 @@
+<tr class="new-quiz-row-edit">
+    <td>
+    <input
+            type="text"
+            name="quiz_name"
+            value=""
+            placeholder="název kvízu"
+            autofocus
+    />
+    <a
+            href="#"
+            hx-post="{{ url_for('new_quiz_row_post') }}"
+            hx-include="[name='quiz_name']"
+            hx-target=".quizzes table"
+            hx-trigger="click, keyup[key=='Enter'] from:[name='quiz_name']"
+            hx-swap="outerHTML"
+            title="vytvořit"
+    >
+        ✅
+    </a>
+    <a
+            href="#"
+            hx-get="{{ url_for('new_quiz_row') }}"
+            hx-target=".new-quiz-row-edit"
+            hx-trigger="click, click from:.quiz-list, keyup[key=='Escape'] from:[name='quiz_name']"
+            hx-swap="outerHTML"
+            title="zrušit"
+    >
+        ❌
+    </a>
+    </td>
+    <td></td>
+</tr>

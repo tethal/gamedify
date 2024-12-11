@@ -1,4 +1,4 @@
-<li class="new_question_row_edit">
+<li class="new-question-row-edit">
     <input
             type="text"
             name="question_text"
@@ -6,21 +6,25 @@
             placeholder="text otázky"
             autofocus
     />
-    <button
+    <a
+            href="#"
             hx-post="{{ url_for('new_question_row_post', quiz_id=quiz.id) }}"
             hx-include="[name='question_text']"
             hx-target=".quiz"
             hx-trigger="click, keyup[key=='Enter'] from:[name='question_text']"
             hx-swap="outerHTML"
+            title="vytvořit"
     >
-        ok
-    </button>
-    <button
+        ✅
+    </a>
+    <a
+            href="#"
             hx-get="{{ url_for('new_question_row', quiz_id=quiz.id) }}"
-            hx-target=".new_question_row_edit"
+            hx-target=".new-question-row-edit"
             hx-trigger="click, click from:.question-list-row, keyup[key=='Escape'] from:[name='question_text']"
             hx-swap="outerHTML"
+            title="zrušit"
     >
-        zrušit
-    </button>
+        ❌
+    </a>
 </li>

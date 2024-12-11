@@ -2,50 +2,30 @@
     <section>
         <h2>Aktivní hry</h2>
         {% if games %}
-        <table>
+        <div class="room-games-container">
             {% for game in games %}
-            <tr>
-                <td>{{ game.player_a.name if game.player_a.name is not none else '(Jméno nezadáno)' }} vs {{ game.player_b.name if game.player_b.name is not none else '(Jméno nezadáno)' }}</td>
-                <td>{{ game.id }}</td>
-            </tr>
+            <div>
+                {% with player=game.player_a %}{% include "partials/room/player_name.html" %}{% endwith %}<br />
+                vs<br />
+                {% with player=game.player_b %}{% include "partials/room/player_name.html" %}{% endwith %}
+            </div>
             {% endfor %}
-        </table>
+        </div>
         {% else %}
         <p>Nejsou vytvořeny žádné aktivní hry.</p>
         {% endif %}
     </section>
+    {% if waiting %}
     <section>
-        <h2>Hráči čekající na soupeře</h2>
-        {% if waiting %}
+        <h2>Na soupeře čeká</h2>
         <table>
             {% for player in waiting %}
             <tr>
-                {% if not player.name %}
-                <td>(jméno nezadáno)</td>
-                {% else %}
-                <td>{{ player.name }}</td>
-                {% endif %}
+                <td>{% include "partials/room/player_name.html" %}</td>
                 <td></td>
             </tr>
             {% endfor %}
         </table>
-        {% else %}
-        <p>Nebyli nalezeni žádní čekající hráči.</p>
-        {% endif %}
     </section>
-    <section>
-        <h2>Připojení hráči</h2>
-        {% if players %}
-        <table>
-            {% for player in players %}
-            <tr>
-                <td>{{ player.name if player.name is not none else '(Jméno nezadáno)' }}</td>
-                <td><a href="#" ws-send hx-vals='{"action": "reject_name", "player_id": "{{ player.id }}"}'>odmítnout jméno</a></td>
-            </tr>
-            {% endfor %}
-        </table>
-        {% else %}
-        <p>Nejsou připojení žádní hráči.</p>
-        {% endif %}
-    </section>
+    {% endif %}
 </div>
