@@ -6,7 +6,7 @@ from playwright.sync_api import BrowserContext, Page, expect
 
 class PlayPage:
     def __init__(self, page: Page):
-        page.goto("/play/123-456")
+        page.goto("/play/1234")
         self.page = page
         self.player_name = self.page.get_by_label("Zadej svoji přezdívku:")
         self.enter_button = self.page.get_by_role("button", name="Vstoupit")
@@ -47,7 +47,7 @@ def room(context: BrowserContext) -> Room:
     page.fill("input[name=username]", "admin")
     page.fill("input[name=password]", "heslo")
     page.get_by_role("button", name="Přihlásit se").click()
-    page.goto("/room/123-456")
+    page.goto("/room/1234")
     return Room(page)
 
 
