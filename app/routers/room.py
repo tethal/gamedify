@@ -2,7 +2,7 @@ import uuid
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Request, WebSocket, status
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from qrcode import QRCode
 from qrcode.image.svg import SvgPathImage
 
@@ -29,6 +29,18 @@ async def room_root(request: Request,
     img = qr.make_image(attrib={'class': 'some-css-class'})
     context = {"request": request, "room": room, "url": url, "qrcode": img.to_string(encoding='unicode')}
     return templates.TemplateResponse("room/main.html", context)
+
+
+@router.get("/{room_code}/close", response_class=HTMLResponse)
+async def room_close(request: Request,
+                     room_code: str,
+                     ctrl: Annotated[Controller, Depends()],
+                     user: Annotated[User, Depends(current_user)]):
+    room = ctrl.get_room(room_code)
+    if room.owner != user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+    ctrl.room_delete(room)
+    return RedirectResponse(url=request.url_for('quiz_root'), status_code=status.HTTP_303_SEE_OTHER)
 
 
 class RoomWsHandler(WsHandler):

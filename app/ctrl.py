@@ -42,7 +42,7 @@ class ControllerImpl:
         return session.user
 
     def is_room_code_valid(self, code: str) -> bool:
-        return self.db.get(Room, code) is not None
+        return self.db.get(Room, code.upper()) is not None
 
     def create_player_connection(self, room_code: str, player_id: uuid.UUID | None) -> PlayerConnection | None:
         if not self.is_room_code_valid(room_code):
@@ -51,7 +51,7 @@ class ControllerImpl:
         if not player:
             player = Player()
             self.db.add(player)
-        pc = self.db.exec(select(PlayerConnection).where(PlayerConnection.room_code == room_code,
+        pc = self.db.exec(select(PlayerConnection).where(PlayerConnection.room_code == room_code.upper(),
                                                          PlayerConnection.player_id == player.id)).one_or_none()
         if not pc:
             pc = PlayerConnection(room_code=room_code, player_id=player.id)
@@ -59,11 +59,13 @@ class ControllerImpl:
         self.db.commit()
         return pc
 
-    def get_player_connection(self, connection_id: uuid.UUID) -> PlayerConnection:
-        return self.db.exec(select(PlayerConnection).where(PlayerConnection.id == connection_id)).one()
+    def get_player_connection(self, connection_id: uuid.UUID) -> PlayerConnection | None:
+        return self.db.exec(select(PlayerConnection).where(PlayerConnection.id == connection_id)).one_or_none()
 
     def set_player_connection_active(self, connection_id: uuid.UUID, active: bool) -> PlayerConnection:
         pc = self.get_player_connection(connection_id)
+        if not pc:
+            return None
         pc.active_count = max(0, pc.active_count + (1 if active else -1))
         self.db.add(pc)
         self.db.commit()
@@ -91,6 +93,14 @@ class ControllerImpl:
 
     def get_room(self, room_code: str) -> Room:
         return self.db.exec(select(Room).where(Room.code == room_code)).one()
+
+    def room_delete(self, room: Room):
+        pcs = self.db.exec(select(PlayerConnection).where(PlayerConnection.room_code == room.code)).all()
+        for pc in pcs:
+            self.event_bus.notify(pc.player_id)
+        self.event_bus.notify(room.code)
+        self.db.delete(room)
+        self.db.commit()
 
     def get_room_players(self, room_code: str) -> Sequence[Player]:
         return self.db.exec(

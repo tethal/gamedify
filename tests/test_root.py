@@ -13,9 +13,9 @@ class TestJoinRoomForm:
         self.invalid_room_code = self.page.get_by_text("Neplatný kód")
 
     def test_join_room(self):
-        self.room_code.fill("123-456")
+        self.room_code.fill("1234")
         self.join_button.click()
-        expect(self.page).to_have_url("/play/123-456")
+        expect(self.page).to_have_url("/play/1234")
 
     def test_invalid_room_code(self):
         self.room_code.fill("xyz")

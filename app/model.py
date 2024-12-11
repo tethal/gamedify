@@ -35,7 +35,7 @@ class Quiz(SQLModel, table=True):
     # entities
     rooms: list["Room"] = Relationship(back_populates="quiz", cascade_delete=False)
     owner: User = Relationship()
-    questions: list["Question"] = Relationship(back_populates="quiz")
+    questions: list["Question"] = Relationship(back_populates="quiz", cascade_delete=True)
 
 
 class Question(SQLModel, table=True):
@@ -78,7 +78,7 @@ class Room(SQLModel, table=True):
     # entities
     quiz: Quiz = Relationship(back_populates="rooms")
     owner: User = Relationship()
-    games: list["Game"] = Relationship(back_populates="room")
+    games: list["Game"] = Relationship(back_populates="room", cascade_delete=True)
 
 
 class PlayerRole(enum.Enum):
@@ -254,5 +254,5 @@ def create_db(engine):
             session.commit()
         if not session.exec(select(Room)).all():
             quiz = session.exec(select(Quiz).where(Quiz.name == "Testovací kvíz 21 otázek")).first()
-            session.add(Room(code="123-456", quiz=quiz, owner=admin))
+            session.add(Room(code="1234", quiz=quiz, owner=admin))
             session.commit()
