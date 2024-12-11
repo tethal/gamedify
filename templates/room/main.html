@@ -11,11 +11,12 @@
     <header class="room-information">
         <div class="room-information-container">
             <div class="room-information-left">
-                <p><strong>Kvíz:</strong> {{ room.quiz.name }}</p>
-                <p><strong>Odkaz:</strong> <a href="{{ url }}">{{ url }}</a></p>
+                <h2><a href="{{ url }}" title="Přejít do místnosti">{{ room.quiz.name }}</a></h2>
+                <span class="room-url">{{ url }}</span>
+                <a href="#" class="room-delete-link"><span class="fa fa-times"></span> Odstranit místnost</a>
             </div>
+            <span class="room-link">{{ room.code }}</span>
             <div class="room-information-right">
-                <p class="room-link">{{ room.code }}</p>
                 {{ qrcode|safe }}
             </div>
         </div>

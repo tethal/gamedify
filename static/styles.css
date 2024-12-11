@@ -2,8 +2,12 @@
     --page-width: 900px;
 }
 
+a {
+    text-decoration: none;
+}
+
 html {
-    font-size: 12pt;
+    font-size: 10pt;
 }
 
 body {
@@ -126,18 +130,17 @@ table a:hover {
 }
 
 .form-container {
-    height: 250px;
+    height: 200px;
 }
 
 .login-form-container {
-    height: 350px;
+    height: 300px;
 }
 
 form {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
     position: relative;
 }
 
@@ -146,7 +149,7 @@ form label {
     margin-top: 20px;
 }
 
-form input[type="text"] {
+form input[type="text"], form input[type="password"] {
     height: 50px;
     text-align: center;
     font-size: 1.6rem;
@@ -155,6 +158,7 @@ form input[type="text"] {
     outline: none;
     border: 2px solid #818181;
     color: #8d8d8d;
+    box-sizing: border-box;
 }
 
 form input::placeholder {
@@ -168,10 +172,13 @@ form input[type="submit"], form input[type="button"], button {
     cursor: pointer;
     color: white;
     border-radius: 8px;
-    width: 60%;
     margin-top: auto;
     margin-bottom: 20px;
     font-size: 0.8rem;
+}
+
+form input[type="submit"].submit-80, form input[type="button"].submit-80, button.submit-80 {
+    width: 80%;
 }
 
 form .error {
@@ -184,7 +191,19 @@ form .error {
 /* quiz list */
 section.quiz-list {
     width: 90%;
-    margin-top: 50px;
+    margin-top: 20px;
+}
+
+.buttons-container > a, .buttons-container > span {
+    margin-left: 8px;
+}
+
+.buttons-container a:hover {
+    text-decoration: none;
+}
+
+.button-room-opened {
+    font-weight: bold;
 }
 
 /* game page */
@@ -217,28 +236,32 @@ section.quiz-list {
 .player-container span {
     font-weight: bold;
     align-self: center;
+    text-align: center;
+    flex: 8;
+}
+
+.player-a, .player-b {
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 10px;
+    border-width: 1px;
+    border-style: solid;
+    position: relative;
+    width: max-content;
+    min-width: 70px;
+    flex: 1;
 }
 
 .player-a {
-    padding: 10px;
-    border-width: 1px;
-    border-style: solid;
     border-radius: 8px 0 0 8px;
     color: #404040;
     border-color: #b9ecb0;
-    position: relative;
-    width: max-content;
 }
 
 .player-b {
-    padding: 10px;
-    border-width: 1px;
-    border-style: solid;
     border-radius: 0 8px 8px 0;
     color: #404040;
     border-color: #E3B0EC;
-    position: relative;
-    width: max-content;
 }
 
 .player-a.on_turn {
@@ -280,6 +303,7 @@ section.quiz-list {
 .popup-question {
     background: rgba(64, 64, 64, .9);
     border-radius: 0px;
+    margin-top: 20px;
 }
 
 .game-question {
@@ -306,6 +330,7 @@ form.answer .answer-yes {
 form.answer input {
     margin: 0 0 15px 0;
     box-sizing: border-box;
+    width: 60%;
 }
 
 /* popup - new game */
@@ -328,19 +353,13 @@ form.answer input {
 
 
 /* quiz page */
-.quiz {
+.quiz-questions {
+    margin: 0 auto;
+    margin-top: 20px;
     display: flex;
-    align-items: flex-start;
-}
-
-.quiz section {
-    flex: 50%;
-    margin: 1rem;
-    border: 1px solid #404040;
-    border-radius: 8px;
-    padding: 1rem;
-    background-color: #fdf8f0;
-    box-shadow: 3px 3px 5px rgb(141, 141, 141);
+    flex-direction: column;
+    justify-content: space-between; 
+    gap: 20px;
 }
 
 .new-quiz-row {
@@ -348,26 +367,30 @@ form.answer input {
     cursor: pointer;
 }
 
-.question-list ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-.question-list ul li {
-    border-top: 1px solid #404040;
-    padding: 0.3rem;
-}
-
-.question-list ul li span {
+.question-list tr td span {
     cursor: pointer;
 }
 
-.question-list ul li.selected {
-    background-color: #b9ecb0;
+.answer-list tr td span {
+    cursor: pointer;
 }
 
-.question-list ul:last-child {
-    border-bottom: 1px solid #404040;
+.question-list tr.selected {
+    color: #c29a16;
+    font-weight: bold;
+}
+
+.answer-list {
+    order: -1;
+}
+
+.question-list, .answer-list {
+    width: 90%;
+    margin: 0 auto;
+}
+
+.buttons-column {
+    width: 80px;
 }
 
 li.new-question-row {
@@ -402,22 +425,43 @@ li.new-answer-row {
 }
 
 .room-information {
-    background-color: #fdf8f0;
+    background-color: #e8faff;
 }
 
 .room-information-container {
     display: flex;
     justify-content: space-between;
+    flex-direction: column;
     align-items: center;
     flex-wrap: wrap;
-    padding: 20px;
+    text-align: center;
 }
 
 .room-information-left {
     display: flex;
     flex-direction: column;
     align-content: space-around;
-    gap: 6px;
+    flex: 3;
+}
+
+.room-information-left h2 {
+    margin: 0;
+}
+
+.room-information-left a {
+    color: rgb(29, 43, 60);
+}
+
+.room-information-left a:hover {
+    color: rgb(12, 18, 26);
+}
+
+.room-information-left .room-delete-link {
+    color: rgb(204, 57, 57);
+}
+
+.room-information-left .room-delete-link:hover {
+    color: red;
 }
 
 .room-information-left header,
@@ -425,14 +469,21 @@ li.new-answer-row {
     margin: 0;
 }
 
+.room-information-left .room-url {
+    color: gray;
+    font-size: 0.8rem;
+    margin-bottom: 20px;
+}
+
 .room-information-right {
     padding: 10px 0;
 }
 
 .room-link {
-    margin: 0;
+    margin-top: 20px;
     padding: 0;
     font-weight: bolder;
+    font-size: 1.4rem;
 }
 
 .room-games-container {
@@ -456,6 +507,9 @@ li.new-answer-row {
 
 @media only screen and (min-width: 576px) {
 
+    html {
+        font-size: 12pt;
+    }
     .form-container,
     .login-form-container {
         width: 325px;
@@ -473,7 +527,8 @@ li.new-answer-row {
         padding: 0 50px;
     }
     .room-link {
-        font-size: 1.8rem;
+        font-size: 2.4rem;
+        margin: 0;
     }
     .popup-question {
         border-radius: 8px;
@@ -509,13 +564,25 @@ li.new-answer-row {
         border-radius: 0px;
         border-radius: 8px;
         position: fixed;
-        bottom: 20%;
+        bottom: 30%;
         left: 50%;
-        translate: -50% -20%;
+        translate: -50% -30%;
         width: 700px;
         z-index: 10;
     }
-
+    .room-information-container {
+        flex-direction: row;
+        text-align: left;
+    }
+    .quiz-questions {
+        flex-direction: row;
+    }
+    .question-list, .answer-list {
+        flex: 1;
+    }
+    .answer-list {
+        order: 0;
+    }
 }
 
 @media only screen and (min-width: 992px) {
@@ -523,12 +590,9 @@ li.new-answer-row {
     section.quiz-list,
     .game,
     .room-information-container,
-    .room-dynamic-content {
+    .room-dynamic-content,
+    .quiz-questions {
         width: var(--page-width)
-    }
-
-    .room-link {
-        font-size: 2.4rem;
     }
 
     /*  game board */

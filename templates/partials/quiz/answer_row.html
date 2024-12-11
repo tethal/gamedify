@@ -1,21 +1,28 @@
-<li class="answer-list-row" hx-target="this" hx-swap="outerHTML">
+<tr class="answer-list-row" hx-target="this" hx-swap="outerHTML">
+    <td>
     {{ answer.text }}
-    {% if editable %}
-        <a
-                href="#"
-                hx-get="{{ url_for('answer_row_edit', answer_id=answer.id) }}"
-                hx-trigger="click"
-                title="upravit"
-        >
-            ✎
-        </a>
-        <a
-                href="#"
-                hx-delete="{{ url_for('answer_row_delete', answer_id=answer.id) }}"
-                hx-trigger="click"
-                title="smazat"
-        >
-            🗑
-        </a>
-    {% endif %}
-</li>
+    </td>
+
+    <td>
+        <span class="buttons-container">
+        {% if editable %}
+            <a
+                    href="#"
+                    hx-get="{{ url_for('answer_row_edit', answer_id=answer.id) }}"
+                    hx-trigger="click"
+                    title="Upravit"
+            >
+                <span class="fa fa-edit"></span>
+            </a>
+            <a
+                    href="#"
+                    hx-delete="{{ url_for('answer_row_delete', answer_id=answer.id) }}"
+                    hx-trigger="click"
+                    title="Smazat"
+            >
+                <span class="fa fa-trash" style="color: red"></span>
+            </a>
+        {% endif %}
+        </span>
+    </td>
+</tr>

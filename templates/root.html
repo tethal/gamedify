@@ -14,11 +14,11 @@
     <div class="form-container">
         <form action="/" method="POST">
             <label for="room-code">Kód místnosti:</label>
-            <input id="room-code" type="text" name="code" placeholder="123-456" value="{{ value|e }}" required/>
+            <input id="room-code" type="text" name="code" placeholder="1234" value="{{ value|e }}" required/>
             {% if invalid_code %}
                 <p class="error">Neplatný kód</p>
             {% endif %}
-            <input type="submit" value="Připojit se"/>
+            <input class="submit-80" type="submit" value="Připojit se"/>
         </form>
     </div>
 </main>

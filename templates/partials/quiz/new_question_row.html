@@ -1,7 +1,13 @@
-<li
+<tr
         class="new-question-row"
         hx-get="{{ url_for('new_question_row_edit', quiz_id=quiz.id) }}"
         hx-swap="outerHTML"
 >
-    ➕ přidat otázku
-</li>
+    <td>
+        <span class="buttons-container">
+            <span class="fa fa-plus" style="color: #7f7f7f;"></span>
+            Přidat otázku
+        </span>
+    </td>
+    <td></td>
+</tr>
