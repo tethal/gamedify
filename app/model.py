@@ -254,5 +254,5 @@ def create_db(engine):
             session.commit()
         if not session.exec(select(Room)).all():
             quiz = session.exec(select(Quiz).where(Quiz.name == "Testovací kvíz 21 otázek")).first()
-            session.add(Room(code="123-456", quiz=quiz, owner=admin))
+            session.add(Room(code="1234", quiz=quiz, owner=admin))
             session.commit()
