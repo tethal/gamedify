@@ -78,7 +78,7 @@ class Room(SQLModel, table=True):
     # entities
     quiz: Quiz = Relationship(back_populates="rooms")
     owner: User = Relationship()
-    games: list["Game"] = Relationship(back_populates="room")
+    games: list["Game"] = Relationship(back_populates="room", cascade_delete=True)
 
 
 class PlayerRole(enum.Enum):

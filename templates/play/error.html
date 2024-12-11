@@ -1,4 +1,10 @@
 <div id="game-content">
-    <h1>Chyba</h1>
-    <pre>{{ exc }}</pre>
+    <section>
+        <h1>Chyba</h1>
+        {% if exc %}
+        <pre>{{ exc }}</pre>
+        {% else %}
+        <p class="message">Místnost byla uzavřena.</p>
+        {% endif %}
+    </section>
 </div>

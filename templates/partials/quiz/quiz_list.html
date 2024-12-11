@@ -1,10 +1,10 @@
-{% if quizzes_and_rooms %}
 <table>
+    {% if quizzes_and_rooms %}
     {% for quiz, room in quizzes_and_rooms %}
         {% include "partials/quiz/quiz_row.html" %}
     {% endfor %}
+    {% else %}
+    <tr><td>Nejsou zde žádné kvízy.</td><td></td></tr>
+    {% endif %}
     {% include "partials/quiz/new_quiz_row.html" %}
 </table>
-{% else %}
-<p>Nejsou zde žádné kvízy.</p>
-{% endif %}

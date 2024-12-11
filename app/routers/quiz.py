@@ -1,8 +1,10 @@
+import random
 import uuid
 from typing import Annotated
 
 from fastapi import APIRouter, Cookie, Depends, Form, HTTPException, Request, status
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
+from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, and_, or_, select
 
 from app.dependencies import current_user, get_db, templates
@@ -74,7 +76,7 @@ async def quiz_root(request: Request,
                     db: Annotated[Session, Depends(get_db)],
                     user: Annotated[User, Depends(current_user)]):
     """Show all quizzes that are public or owned by the user. Also show rooms owned by the user."""
-    context = {"request": request, "quizzes_and_rooms": await load_quiz_list(db, user)}
+    context = {"request": request, "user": user, "quizzes_and_rooms": await load_quiz_list(db, user)}
     return templates.TemplateResponse("quiz/main.html", context)
 
 
@@ -400,3 +402,24 @@ async def quiz_select_question(request: Request,
     response.set_cookie("selected_question_id", value=str(question.id), expires=259200,
                         secure=True, httponly=True, samesite="lax")
     return response
+
+
+@router.get("/{quiz_id}/create_room", response_class=HTMLResponse)
+async def room_create(request: Request,
+                      quiz: Annotated[Quiz, Depends(get_quiz)],
+                      db: Annotated[Session, Depends(get_db)],
+                      user: Annotated[User, Depends(current_user)]):
+    if quiz.owner != user and not quiz.is_public:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+    for i in range(50):
+        code = ''.join(random.sample("34679CDFGHJKLMNPQRTVWX", 4))
+        room = Room(code=code, quiz=quiz, owner=user)
+        try:
+            db.add(room)
+            db.commit()
+            return RedirectResponse(url=request.url_for('room_root', room_code=code),
+                                    status_code=status.HTTP_303_SEE_OTHER)
+        except IntegrityError:
+            db.rollback()
+    raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                        detail="Unable to generate unique room code ")

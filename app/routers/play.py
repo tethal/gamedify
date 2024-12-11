@@ -49,6 +49,9 @@ class PlayerWsHandler(WsHandler):
 
     async def on_event(self, ctrl: Controller):
         pc = ctrl.get_player_connection(self.connection_id)
+        if not pc:
+            await self.send(jinja_env.get_template('play/error.html').render())
+            return
         if not pc.player.name:
             template = 'play/no_name.html'
         elif not pc.game and not ctrl.try_start_game(pc):
@@ -74,6 +77,8 @@ class PlayerWsHandler(WsHandler):
 
     async def on_receive(self, ctrl: Controller, msg):
         pc = ctrl.get_player_connection(self.connection_id)
+        if not pc:
+            return
         if msg['action'] == 'set_name':
             ctrl.set_player_name(pc.room, pc.player, msg['player_name'])
         elif msg['action'] == 'tile_click':
