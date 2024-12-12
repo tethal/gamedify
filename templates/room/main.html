@@ -13,7 +13,7 @@
             <div class="room-information-left">
                 <h2><a href="{{ url }}" title="Přejít do místnosti">{{ room.quiz.name }}</a></h2>
                 <span class="room-url">{{ url }}</span>
-                <a href="{{ url_for('room_close', room_code=room.code) }}" class="room-delete-link"><span class="fa fa-times"></span> Odstranit místnost</a>
+                <span><a href="{{ url_for('room_close', room_code=room.code) }}" class="room-delete-link"><span class="fa fa-times"></span> Odstranit místnost</a></span>
             </div>
             <span class="room-link">{{ room.code }}</span>
             <div class="room-information-right">
