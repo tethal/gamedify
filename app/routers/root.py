@@ -20,6 +20,7 @@ async def root(request: Request,
 async def root_code_submit(request: Request,
                            ctrl: Annotated[Controller, Depends()],
                            code: Annotated[str, Form()] = ''):
+    code = code.upper()
     if ctrl.is_room_code_valid(code):
         return RedirectResponse(url=f'/play/{code}', status_code=status.HTTP_303_SEE_OTHER)
     else:
