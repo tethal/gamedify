@@ -58,7 +58,7 @@ def test_player_reject_name(page: Page, room: Room):
     play.enter_button.click()
     expect(room.page.get_by_text("Alice")).to_be_visible()
     expect(play.player_name).not_to_be_visible()
-    r = room.page.get_by_text("Alice").locator("a", has_text="❌")
+    r = room.page.get_by_text("Alice").locator('xpath=..').locator("span.fa-close")
     expect(r).to_be_visible()
     r.click()
     expect(play.player_name).to_be_visible()
