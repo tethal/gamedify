@@ -4,25 +4,22 @@
         {% if games %}
         <div class="room-games-container">
             {% for game in games %}
-            <div>
-                {% with player=game.player_a %}{% include "partials/room/player_name.html" %}{% endwith %}<br />
-                vs<br />
-                {% with player=game.player_b %}{% include "partials/room/player_name.html" %}{% endwith %}
-            </div>
+                {% include "partials/room/game_card.html" %}
             {% endfor %}
         </div>
         {% else %}
-        <p>Nejsou vytvořeny žádné aktivní hry.</p>
+            <p>Nejsou vytvořeny žádné aktivní hry.</p>
         {% endif %}
     </section>
     {% if waiting %}
     <section>
-        <h2>Na soupeře čeká</h2>
+        <h2>Čekající na soupeře</h2>
         <table>
             {% for player in waiting %}
             <tr>
-                <td>{% include "partials/room/player_name.html" %}</td>
-                <td></td>
+                <td>
+                    {% include "partials/room/player_name.html" %}
+                </td>
             </tr>
             {% endfor %}
         </table>

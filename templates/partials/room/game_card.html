@@ -1,0 +1,13 @@
+<div class="card-container">
+    <div>
+    {% with player=game.player_a %}
+        {% include "partials/room/player_name.html" %}
+    {% endwith %}
+    </div>
+    <div>vs</div>
+    <div>
+    {% with player=game.player_b %}
+        {% include "partials/room/player_name.html" %}
+    {% endwith %}
+    </div>
+</div>

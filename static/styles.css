@@ -7,7 +7,7 @@ a {
 }
 
 html {
-    font-size: 10pt;
+    font-size: 11pt;
 }
 
 body {
@@ -107,6 +107,10 @@ table td:last-of-type {
     text-align: right;
 }
 
+table td.left {
+    text-align: left;
+}
+
 table a {
     text-decoration: none;
     color: #37858b;
@@ -161,6 +165,10 @@ form input[type="text"], form input[type="password"] {
     box-sizing: border-box;
 }
 
+input[type="text"] {
+    width: 100%;
+}
+
 form input::placeholder {
     color: #bbbbbb;
 }
@@ -184,14 +192,14 @@ form input[type="submit"].submit-80, form input[type="button"].submit-80, button
 form .error {
     text-align: center;
     color: #e04040;
-    font-size: 0.8rem;
-    margin: 0;
+    font-size: 0.9rem;
+    margin: 10px 0;
 }
 
 /* quiz list */
 section.quiz-list {
     width: 90%;
-    margin-top: 20px;
+    margin: 20px 0;
 }
 
 .buttons-container > a, .buttons-container > span {
@@ -199,6 +207,14 @@ section.quiz-list {
 }
 
 .buttons-container a:hover {
+    text-decoration: none;
+}
+
+.buttons-container-left > a, .buttons-container-left > span {
+    margin-right: 8px;
+}
+
+.buttons-container-left a:hover {
     text-decoration: none;
 }
 
@@ -230,6 +246,7 @@ section.quiz-list {
 .player-container {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin: 20px 20px;
 }
 
@@ -237,18 +254,21 @@ section.quiz-list {
     font-weight: bold;
     align-self: center;
     text-align: center;
-    flex: 8;
+    font-size: 0.9rem;
+    flex: 5;
 }
 
 .player-a, .player-b {
     white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
     padding: 10px;
     border-width: 1px;
     border-style: solid;
     position: relative;
     width: max-content;
-    min-width: 70px;
+    min-width: 60px;
+    font-size: 0.9rem;
     flex: 1;
 }
 
@@ -355,11 +375,9 @@ form.answer input {
 /* quiz page */
 .quiz-questions {
     margin: 0 auto;
-    margin-top: 20px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; 
-    gap: 20px;
+    justify-content: space-between;
 }
 
 .new-quiz-row {
@@ -367,8 +385,12 @@ form.answer input {
     cursor: pointer;
 }
 
-.question-list tr td span {
+.question-list tr td:nth-child(1) {
     cursor: pointer;
+}
+
+.question-list tr td:hover {
+    color: #c29a16;
 }
 
 .answer-list tr td span {
@@ -386,14 +408,18 @@ form.answer input {
 
 .question-list, .answer-list {
     width: 90%;
-    margin: 0 auto;
+    margin: 20px auto;
 }
 
 .buttons-column {
+    width: 50px;
+}
+
+.buttons-column-80 {
     width: 80px;
 }
 
-li.new-question-row {
+.new-question-row {
     color: #808080;
     cursor: pointer;
 }
@@ -408,7 +434,7 @@ li.new-question-row {
     padding: 0.3rem;
 }
 
-li.new-answer-row {
+.new-answer-row {
     color: #808080;
     cursor: pointer;
 }
@@ -420,12 +446,12 @@ li.new-answer-row {
 /* room page */
 .room-information-container,
 .room-dynamic-content {
-    width: 90%;
     margin: 0 auto;
 }
 
 .room-information {
-    background-color: #e8faff;
+    /*background-color: #f2f8ff;*/
+    border-bottom: 1px solid rgba(28, 43, 60, .2);
 }
 
 .room-information-container {
@@ -487,17 +513,54 @@ li.new-answer-row {
 }
 
 .room-games-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  grid-gap: 20px;
-  align-items: stretch;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 20px;
 }
 
-.room-games-container div {
-  border: 1px solid #ccc;
-  box-shadow: 2px 2px 6px 0px  rgba(0,0,0,0.3);
+.player-name-container {
+    display: flex;
+    flex-direction: row;
+    align-content: space-between;
+    justify-content: space-between;
+}
+
+.card-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 160px;
+    width: 140px;
+    border-radius: 8px;
+    background-color: #ffffff;
+    border: 1px solid rgba(179, 204, 231, 0.9);
+    box-shadow: 2px 2px 6px 0px  rgba(0,0,0,0.3);
+}
+
+.card-container div:nth-child(odd) {
     padding: 8px;
+    background-color: rgba(179, 204, 231, 0.9);
+}
+
+.card-container div:nth-child(2) {
     text-align: center;
+    color: gray;
+    font-size: 0.8rem;
+}
+
+.card-container div:nth-child(1) {
+    border-radius: 6px 6px 0 0;
+}
+
+.card-container div:nth-child(3) {
+    border-radius: 0 0 6px 6px;
+}
+
+.no-name {
+    color: gray;
+    font-size: 0.9rem;
 }
 
 /* other */
@@ -516,18 +579,29 @@ li.new-answer-row {
     }
 
     .room-link {
-        font-size: 1.4rem;
+        font-size: 2.4rem;
+        margin: 0;
+    }
+    .room-dynamic-content {
+        width: 90%;
+    }
+
+    .room-information-container {
+        flex-direction: row;
+        text-align: left;
+        margin: 0 20px;
+    }
+    .room-games-container {
+        flex-direction: row;
     }
 }
 
 @media only screen and (min-width: 758px) {
-
-    /*  game board */
     .game-board {
         padding: 0 50px;
     }
     .room-link {
-        font-size: 2.4rem;
+        font-size: 2.8rem;
         margin: 0;
     }
     .popup-question {
@@ -549,7 +623,7 @@ li.new-answer-row {
     }
     #overlay {
         background-color: rgba(0, 0, 0, .1);
-        height: 100vh; /* Pokryje celý pohled (viewport) */
+        height: 100vh; 
         width: 100vw; 
         position: fixed;
         top: 0;
@@ -570,10 +644,6 @@ li.new-answer-row {
         width: 700px;
         z-index: 10;
     }
-    .room-information-container {
-        flex-direction: row;
-        text-align: left;
-    }
     .quiz-questions {
         flex-direction: row;
     }
@@ -582,6 +652,13 @@ li.new-answer-row {
     }
     .answer-list {
         order: 0;
+    }
+    .quiz-questions {
+        margin: 0 20px;
+        gap: 20px;
+    }
+    .player-container span {
+        font-size: 1.0rem;
     }
 }
 
@@ -594,9 +671,15 @@ li.new-answer-row {
     .quiz-questions {
         width: var(--page-width)
     }
+    .quiz-questions {
+        margin: 0 auto;
+    }
 
     /*  game board */
     .game-board {
         padding: 0 70px;
+    }
+    .room-information-container {
+        margin: 0 auto;
     }
 }

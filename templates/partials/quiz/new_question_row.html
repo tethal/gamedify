@@ -3,11 +3,10 @@
         hx-get="{{ url_for('new_question_row_edit', quiz_id=quiz.id) }}"
         hx-swap="outerHTML"
 >
-    <td>
-        <span class="buttons-container">
+    <td colspan="2" class="buttons-column left">
+        <span class="buttons-container-left">
             <span class="fa fa-plus" style="color: #7f7f7f;"></span>
             Přidat otázku
         </span>
     </td>
-    <td></td>
 </tr>

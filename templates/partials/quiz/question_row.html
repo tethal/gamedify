@@ -1,11 +1,10 @@
 <tr class="question-list-row{{ ' selected' if question == selected_question }}">
-    <td>
-        <span
-                hx-post="{{ url_for('quiz_select_question', quiz_id=quiz.id, question_id=question.id) }}"
-                hx-target=".quiz-questions"
-                hx-swap="outerHTML">
-            {{ question.text }}
-        </span>
+    <td
+        hx-post="{{ url_for('quiz_select_question', quiz_id=quiz.id, question_id=question.id) }}"
+        hx-target=".quiz-questions"
+        hx-swap="outerHTML"
+    >
+        <span>{{ question.text }}</span>
     </td>
     <td class="buttons-column">
     {% if editable %}

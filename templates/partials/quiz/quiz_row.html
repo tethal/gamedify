@@ -1,7 +1,7 @@
 <tr hx-target="this" hx-swap="outerHTML">
     <td>
         {% if quiz.owner == user %}
-        <span class="buttons-container">
+        <span class="buttons-container-left">
             <a href="#"
                 hx-get="{{ url_for('quiz_row_edit', quiz_id=quiz.id) }}"
                 hx-trigger="click"
@@ -12,13 +12,15 @@
         {% endif %}
         {{ quiz.name }}
     </td>
-    <td>
+    <td class="buttons-column-80">
         <span class="buttons-container">
 
             {% if room %}
-            <a class="button-room-opened" href="{{ url_for('room_root', room_code=room.code) }}" title="Otevřená místnost">Otevřená místnost</a>
+            <a class="button-room-opened" href="{{ url_for('room_root', room_code=room.code) }}" title="Otevřená místnost">
+                <span class="fa fa-folder-open" style="color: #5299cf;"></span>
+            </a>
             {% elif quiz.questions|length >= 10 %}
-            <a href="{{ url_for('room_create', quiz_id=quiz.id) }}" title="Otevřít místnost">Otevřít místnost</a>
+            <a href="{{ url_for('room_create', quiz_id=quiz.id) }}" title="Otevřít místnost"><span class="fa fa-folder"></span></a>
             {% endif %}
 
             <a href="{{ url_for('quiz_detail', quiz_id=quiz.id) }}" title="Zobrazit otázky"><span class="fa fa-th-list"></span></a>
@@ -32,6 +34,8 @@
             >
                 <span class="fa fa-trash" style="color: red"></span>
             </a>
+            {% else %}
+                <span class="fa fa-trash" style="color: #d5d5d5"></span>
             {% endif %}
         </span>
     </td>
