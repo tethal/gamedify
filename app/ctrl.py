@@ -42,7 +42,7 @@ class ControllerImpl:
         return session.user
 
     def is_room_code_valid(self, code: str) -> bool:
-        return self.db.get(Room, code.upper()) is not None
+        return self.db.get(Room, code) is not None
 
     def create_player_connection(self, room_code: str, player_id: uuid.UUID | None) -> PlayerConnection | None:
         if not self.is_room_code_valid(room_code):
@@ -51,7 +51,7 @@ class ControllerImpl:
         if not player:
             player = Player()
             self.db.add(player)
-        pc = self.db.exec(select(PlayerConnection).where(PlayerConnection.room_code == room_code.upper(),
+        pc = self.db.exec(select(PlayerConnection).where(PlayerConnection.room_code == room_code,
                                                          PlayerConnection.player_id == player.id)).one_or_none()
         if not pc:
             pc = PlayerConnection(room_code=room_code, player_id=player.id)

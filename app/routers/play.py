@@ -17,6 +17,7 @@ async def play_root(request: Request,
                     ctrl: Annotated[Controller, Depends()],
                     room_code: str,
                     player_id: Annotated[uuid.UUID | None, Cookie()] = None):
+    room_code = room_code.upper()
     pc = ctrl.create_player_connection(room_code, player_id)
     if not pc:
         return templates.TemplateResponse("play/room_closed.html", {"request": request})
