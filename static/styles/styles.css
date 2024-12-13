@@ -52,6 +52,11 @@ body>header .quiz-name {
     margin: 0 20px;
 }
 
+.information {
+    font-size: 0.9rem;
+    color: gray;
+}
+
 /* navigation */
 nav ul {
     margin: 0 20px 0 0;
@@ -204,6 +209,7 @@ section.quiz-list {
 
 .buttons-container > a, .buttons-container > span {
     margin-left: 8px;
+    font-size: 1.1rem;
 }
 
 .buttons-container a:hover {
@@ -212,6 +218,7 @@ section.quiz-list {
 
 .buttons-container-left > a, .buttons-container-left > span {
     margin-right: 8px;
+    font-size: 1.1rem;
 }
 
 .buttons-container-left a:hover {
@@ -412,11 +419,11 @@ form.answer input {
 }
 
 .buttons-column {
-    width: 50px;
+    width: 58px;
 }
 
 .buttons-column-80 {
-    width: 80px;
+    width: 90px;
 }
 
 .new-question-row {
@@ -520,6 +527,10 @@ form.answer input {
     gap: 20px;
 }
 
+#room-content {
+    text-align: center;
+}
+
 .player-name-container {
     display: flex;
     flex-direction: row;
@@ -568,6 +579,80 @@ form.answer input {
     color: #616161;
 }
 
+/* navigation */
+nav {
+    height: 60px;
+    background-color: rgb(29, 43, 60);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.links-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: fixed;
+
+    top: 0;
+    right: -100%;
+    z-index: 100;
+    height: 100%;
+    width: 280px;
+
+    background-color: rgb(18, 26, 36);
+    box-shadow: -5px 0 5px rgba(0, 0, 0, 0.25);
+
+    transition: right 0.75s ease-out;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 20px 0 0;
+    list-style-type: none;
+    box-sizing: border-box;
+    height: auto;
+    width: 100%;
+    padding: 20px 30px;
+    justify-content: flex-start;
+}
+
+nav a:hover {
+    background-color: rgb(47, 59, 75);
+}
+
+nav .home-link {
+    margin-right: auto;
+}
+
+nav svg {
+    fill: #f0f0f0f0;
+}
+
+#sidebar-active {
+    display: none;
+}
+
+.open-sidebar-button,
+.close-sidebar-button {
+    padding: 20px;
+    display: block;
+}
+
+#sidebar-active:checked~.links-container {
+    right: 0;
+}
+
+#sidebar-active:checked~#overlay-sidebar {
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9;
+}
+
 @media only screen and (min-width: 576px) {
 
     html {
@@ -593,6 +678,9 @@ form.answer input {
     }
     .room-games-container {
         flex-direction: row;
+    }
+    #room-content {
+        text-align: left;
     }
 }
 
@@ -663,7 +751,6 @@ form.answer input {
 }
 
 @media only screen and (min-width: 992px) {
-
     section.quiz-list,
     .game,
     .room-information-container,
@@ -681,5 +768,34 @@ form.answer input {
     }
     .room-information-container {
         margin: 0 auto;
+    }
+
+    /* navigation */
+    .links-container {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        position: inherit;
+        box-shadow: none;
+        background-color: rgb(29, 43, 60);
+    }
+
+    nav {
+        justify-content: flex-end;
+        align-items: center;
+        margin-right: 20px;
+    }
+
+    nav a {
+        margin: 0;
+        padding: 12px;
+        width: auto;
+    }
+
+    .open-sidebar-button,
+    .close-sidebar-button {
+        display: none;
     }
 }

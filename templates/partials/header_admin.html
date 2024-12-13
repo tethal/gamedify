@@ -1,7 +1,26 @@
 {% include 'partials/header_logo.html' %}
+
 <nav>
-    <ul>
-        <li><a href="{{ url_for('quiz_root') }}">Seznam kvízů</a></li>|
-        <li><a href="{{ url_for('logout') }}">Odhlásit se</a></li>
-    </ul>
+    <input type="checkbox" name="" id="sidebar-active">
+
+        <label for="sidebar-active" class="open-sidebar-button">
+            <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 -960 960 960" width="32" fill="#e8eaed">
+                <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z" />
+            </svg>
+        </label>
+
+        <label id="overlay-sidebar" for="sidebar-active"></label>
+
+        <div class="links-container">
+            <label for="sidebar-active" class="close-sidebar-button">
+                <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 -960 960 960" width="32" fill="#e8eaed">
+                    <path
+                        d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+                </svg>
+            </label>
+
+            <a href="{{ url_for('quiz_root') }}">Seznam kvízů</a>
+            <a href="{{ url_for('logout') }}">Odhlásit se</a>
+            
+        </div>
 </nav>

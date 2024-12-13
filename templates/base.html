@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', path='/fonts/all.min.css') }}">
-    <script src="{{ url_for('static', path='/htmx.min.js') }}"></script>
-    <script src="{{ url_for('static', path='/ws.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', path='/styles/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='/styles/all.min.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', path='/favicon.png') }}" type="image/x-icon">
+    <script src="{{ url_for('static', path='/js/htmx.min.js') }}"></script>
+    <script src="{{ url_for('static', path='/js/ws.js') }}"></script>
+    <script src="{{ url_for('static', path='/js/main.js') }}"></script>
     <title>{% block title %}Gamedify{% endblock %}</title>
 </head>
 <body>

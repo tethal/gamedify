@@ -1,5 +1,9 @@
 <main class="quiz-questions">
     <section class="question-list">
+        {% if quiz.questions|length < 10 %}
+            <p class="information">Zadejte alespoň 10 otázek s odpověďmi.</p>
+        {% endif %}
+
         <h2>{{ quiz.name }}</h2>
         <table>
             <tbody>
