@@ -1,10 +1,11 @@
 import enum
+import os
 import uuid
 from datetime import datetime
 from random import shuffle
 from typing import Optional
 
-from sqlalchemy import Column, Enum, text, update
+from sqlalchemy import Column, Enum, delete, text, update
 from sqlmodel import Field, Relationship, SQLModel, select
 from sqlmodel import Session
 
@@ -231,8 +232,12 @@ def create_db(engine):
     with engine.connect() as connection:
         connection.execute(text("PRAGMA foreign_keys=ON"))  # for SQLite only
     with Session(engine) as session:
-        # TODO delete all rooms, games and player connections
-        session.exec(update(PlayerConnection).values(active_count=0))
+        if os.environ.get('GAMEDIFY_PROD', '0') == '1':
+            session.exec(delete(Room))
+            session.exec(delete(Game))
+            session.exec(delete(PlayerConnection))
+        else:
+            session.exec(update(PlayerConnection).values(active_count=0))
         session.commit()
         admin = session.exec(select(User).where(User.username == "admin")).first()
         if not admin:
@@ -252,7 +257,7 @@ def create_db(engine):
                     for answer in answers:
                         session.add(Answer(text=answer, question=q))
             session.commit()
-        if not session.exec(select(Room)).all():
+        if not session.exec(select(Room)).all() and os.environ.get('GAMEDIFY_PROD', '0') != '1':
             quiz = session.exec(select(Quiz).where(Quiz.name == "Testovací kvíz 21 otázek")).first()
             session.add(Room(code="1234", quiz=quiz, owner=admin))
             session.commit()
