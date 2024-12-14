@@ -16,6 +16,7 @@
                 hx-trigger="click"
                 hx-target="closest tr"
                 hx-swap="outerHTML"
+                hx-on:click="htmx.trigger('.dismissable', 'dismiss-question-edit')"
                 title="Upravit"
             >
                 <span class="fa fa-edit"></span>

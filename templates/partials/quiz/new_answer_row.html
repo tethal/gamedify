@@ -2,11 +2,13 @@
     class="new-answer-row"
     hx-get="{{ url_for('new_answer_row_edit') }}"
     hx-swap="outerHTML"
+    hx-on:click="htmx.trigger('.dismissable', 'dismiss-answer-edit')"
 >
     <td colspan="2" class="buttons-column left">
         <span class="buttons-container-left">
             <span class="fa fa-plus" style="color: #7f7f7f;"></span>
             Přidat odpověď
         </span>
+        <span class="dismissable" hx-on:dismiss-answer-edit=""/> {# dummy consumer of the dismiss event #}
     </td>
 </tr>

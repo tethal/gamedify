@@ -2,11 +2,13 @@
     class="new-question-row"
     hx-get="{{ url_for('new_question_row_edit', quiz_id=quiz.id) }}"
     hx-swap="outerHTML"
+    hx-on:click="htmx.trigger('.dismissable', 'dismiss-question-edit')"
 >
     <td colspan="2" class="buttons-column left">
         <span class="buttons-container-left">
             <span class="fa fa-plus" style="color: #7f7f7f;"></span>
             Přidat otázku
         </span>
+        <span class="dismissable" hx-on:dismiss-question-edit=""/> {# dummy consumer of the dismiss event #}
     </td>
 </tr>
