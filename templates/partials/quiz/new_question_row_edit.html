@@ -23,7 +23,7 @@
             </a>
             <a
                 href="#"
-                class="dismissable"
+                class="question-edit-dismissable"
                 hx-get="{{ url_for('new_question_row', quiz_id=quiz.id) }}"
                 hx-target=".new-question-row-edit"
                 hx-trigger="click, dismiss-question-edit, keyup[key=='Escape'] from:[name='question_text']"
