@@ -23,7 +23,7 @@
             <a
                 href="#"
                 hx-get="{{ url_for('answer_row_get', answer_id=answer.id) }}"
-                hx-trigger="click, click from:.answer-list-row, keyup[key=='Escape'] from:[name='answer_text']"
+                hx-trigger="click, click from:.answer-list-row, click from:.new-answer-row, keyup[key=='Escape'] from:[name='answer_text']"
                 title="Zrušit"
             >
                 <span class="fa fa-window-close" style="color: red;"></span>
