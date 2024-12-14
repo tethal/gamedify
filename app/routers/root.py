@@ -19,10 +19,11 @@ async def root(request: Request,
 @router.post("/")
 async def root_code_submit(request: Request,
                            ctrl: Annotated[Controller, Depends()],
+                           user: Annotated[User | None, Depends(current_user_opt)],
                            code: Annotated[str, Form()] = ''):
     code = code.upper()
     if ctrl.is_room_code_valid(code):
         return RedirectResponse(url=f'/play/{code}', status_code=status.HTTP_303_SEE_OTHER)
     else:
-        context = {"request": request, "invalid_code": True, "value": code}
+        context = {"request": request, "invalid_code": True, "value": code, "user": user}
         return templates.TemplateResponse("root.html", context)
