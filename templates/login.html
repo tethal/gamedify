@@ -1,20 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <main class="form">
-        <div class="login-form-container">
-            <form method="POST">
-                <label for="username">Uživatelské jméno:</label>
-                <input id="username" type="text" name="username" value="{{ username }}" required />
+<main class="form">
+    <div class="login-form-container">
+        <form method="POST">
+            <label for="username">Uživatelské jméno:</label>
+            <input id="username" type="text" name="username" value="{{ username }}" required />
 
-                <label for="password">Heslo:</label>
-                <input id="password" type="password" name="password" required aria-invalid="{{ invalid_login|string|lower }}"/>
-                
-                {% if invalid_login %}
-                <p class="error">Neplatné jméno nebo heslo</p>
-                {% endif %}
-                <input class="submit-80" type="submit" value="Přihlásit se"/>
-            </form>
-        </div>
-    </main>
+            <label for="password">Heslo:</label>
+            <input id="password" type="password" name="password" required aria-invalid="{{ invalid_login|string|lower }}"/>
+            
+            {% if invalid_login %}
+            <p class="error">Neplatné jméno nebo heslo</p>
+            {% endif %}
+            
+            <input class="submit-80" type="submit" value="Přihlásit se"/>
+        </form>
+    </div>
+</main>
 {% endblock %}

@@ -1,14 +1,14 @@
 <span class="player-name-container">
     {% if player.name %}
-        <span>
-            {{ player.name }}
-        </span>
-        <span>
-            <a href="#" ws-send hx-vals='{"action": "reject_name", "player_id": "{{ player.id }}"}' title="Odmítnout jméno">
-                <span class="fa fa-close" style="color: red">
-            </a>
-        </span>
+    <span>
+        {{ player.name }}
+    </span>
+    <span>
+        <a href="#" ws-send hx-vals='{"action": "reject_name", "player_id": "{{ player.id }}"}' title="Odmítnout jméno">
+            <span class="fa fa-close" style="color: red">
+        </a>
+    </span>
     {% else %}
-        <span class="no-name">Jméno nezadáno</span>
+    <span class="no-name">Jméno nezadáno</span>
     {% endif %}
 </span>

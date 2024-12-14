@@ -1,23 +1,16 @@
 {% extends "base.html" %}
 
-{% block header %}
-<header>
-    {% if user %}
-        {% include 'partials/header_admin.html' %}
-    {% else %}
-        {% include 'partials/header_login.html' %}
-    {% endif %}
-</header>
-{% endblock %}
 {% block content %}
 <main class="form">
     <div class="form-container">
         <form action="/" method="POST">
             <label for="room-code">Kód místnosti:</label>
             <input id="room-code" type="text" name="code" placeholder="1234" value="{{ value|e }}" required/>
+
             {% if invalid_code %}
-                <p class="error">Neplatný kód</p>
+            <p class="error">Neplatný kód</p>
             {% endif %}
+
             <input class="submit-80" type="submit" value="Připojit se"/>
         </form>
     </div>

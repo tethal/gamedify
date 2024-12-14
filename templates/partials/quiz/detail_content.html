@@ -1,7 +1,7 @@
 <main class="quiz-questions">
     <section class="question-list">
         {% if quiz.questions|length < 10 %}
-            <p class="information">Zadejte alespoň 10 otázek s odpověďmi.</p>
+        <p class="information">Zadejte alespoň 10 otázek s odpověďmi.</p>
         {% endif %}
 
         <h2>{{ quiz.name }}</h2>
@@ -18,17 +18,17 @@
     </section>
     <section class="answer-list">
         {% if selected_question %}
-            <h2>{{ selected_question.text }}</h2>
-            <table>
-                <tbody>
-                    {% for answer in selected_question.answers %}
-                        {% include 'partials/quiz/answer_row.html' %}
-                    {% endfor %}
-                    {% if editable %}
-                        {% include "partials/quiz/new_answer_row.html" %}
-                {% endif %}
-                </tbody>
-            </table>
+        <h2>{{ selected_question.text }}</h2>
+        <table>
+            <tbody>
+                {% for answer in selected_question.answers %}
+                    {% include 'partials/quiz/answer_row.html' %}
+                {% endfor %}
+                {% if editable %}
+                    {% include "partials/quiz/new_answer_row.html" %}
+            {% endif %}
+            </tbody>
+        </table>
         {% endif %}
     </section>
 </main>

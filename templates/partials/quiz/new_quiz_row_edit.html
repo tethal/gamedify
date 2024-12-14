@@ -1,11 +1,11 @@
 <tr class="new-quiz-row-edit">
     <td>
         <input
-                type="text"
-                name="quiz_name"
-                value=""
-                placeholder="Název kvízu"
-                autofocus
+            type="text"
+            name="quiz_name"
+            value=""
+            placeholder="Název kvízu"
+            autofocus
         />
     </td>
     <td class="buttons-column">
@@ -17,7 +17,7 @@
                 hx-target=".quizzes table"
                 hx-trigger="click, keyup[key=='Enter'] from:[name='quiz_name']"
                 hx-swap="outerHTML"
-                title="vytvořit"
+                title="Vytvořit"
             >
                 <span class="fa fa-check-square"></span>
             </a>
@@ -25,9 +25,9 @@
                 href="#"
                 hx-get="{{ url_for('new_quiz_row') }}"
                 hx-target=".new-quiz-row-edit"
-                hx-trigger="click, click from:.quiz-list, keyup[key=='Escape'] from:[name='quiz_name']"
+                hx-trigger="click, click from:.quiz-list-row, keyup[key=='Escape'] from:[name='quiz_name']"
                 hx-swap="outerHTML"
-                title="zrušit"
+                title="Zrušit"
             >
                 <span class="fa fa-window-close" style="color: red;"></span>
             </a>

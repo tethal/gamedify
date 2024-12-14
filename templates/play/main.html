@@ -8,11 +8,11 @@
 {% endblock %}
 
 {% block content %}
-    <main class="game">
-        <div class="game-container" hx-ext="ws" ws-connect="/play/ws/{{ connection_id }}">
-            <div id="game-content">
-                <p class="message">Čekej, probíhá připojování...</p>
-            </div>
+<main class="game">
+    <div class="game-container" hx-ext="ws" ws-connect="/play/ws/{{ connection_id }}">
+        <div id="game-content">
+            <p class="message">Čekej, probíhá připojování...</p>
         </div>
-    </main>
+    </div>
+</main>
 {% endblock %}

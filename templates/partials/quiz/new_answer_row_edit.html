@@ -1,33 +1,33 @@
 <tr class="new-answer-row-edit">
     <td>
         <input
-                type="text"
-                name="answer_text"
-                value=""
-                placeholder="Odpověď"
-                autofocus
+            type="text"
+            name="answer_text"
+            value=""
+            placeholder="Odpověď"
+            autofocus
         />
     </td>
     <td class="buttons-column">
         <span class="buttons-container">
             <a
-                    href="#"
-                    hx-post="{{ url_for('new_answer_row_post') }}"
-                    hx-include="[name='answer_text']"
-                    hx-target=".quiz-questions"
-                    hx-trigger="click, keyup[key=='Enter'] from:[name='answer_text']"
-                    hx-swap="outerHTML"
-                    title="Vytvořit"
+                href="#"
+                hx-post="{{ url_for('new_answer_row_post') }}"
+                hx-include="[name='answer_text']"
+                hx-target=".quiz-questions"
+                hx-trigger="click, keyup[key=='Enter'] from:[name='answer_text']"
+                hx-swap="outerHTML"
+                title="Vytvořit"
             >
                 <span class="fa fa-check-square"></span>
             </a>
             <a
-                    href="#"
-                    hx-get="{{ url_for('new_answer_row') }}"
-                    hx-target=".new-answer-row-edit"
-                    hx-trigger="click, click from:.answer-list-row, keyup[key=='Escape'] from:[name='answer_text']"
-                    hx-swap="outerHTML"
-                    title="Zrušit"
+                href="#"
+                hx-get="{{ url_for('new_answer_row') }}"
+                hx-target=".new-answer-row-edit"
+                hx-trigger="click, click from:.answer-list-row, keyup[key=='Escape'] from:[name='answer_text']"
+                hx-swap="outerHTML"
+                title="Zrušit"
             >
                 <span class="fa fa-window-close" style="color: red;"></span>
             </a>

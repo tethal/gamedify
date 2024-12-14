@@ -9,14 +9,19 @@
     <script src="{{ url_for('static', path='/js/htmx.min.js') }}"></script>
     <script src="{{ url_for('static', path='/js/ws.js') }}"></script>
     <script src="{{ url_for('static', path='/js/main.js') }}"></script>
-    <title>{% block title %}Gamedify{% endblock %}</title>
+    <title>{% block title %}AZGame{% endblock %}</title>
 </head>
 <body>
     {% block header %}
     <header>
-        {% include 'partials/header_logo.html' %}
+        {% if user %}
+            {% include 'partials/header_admin.html' %}
+        {% else %}
+            {% include 'partials/header_login.html' %}
+        {% endif %}
     </header>
     {% endblock %}
+    
     {% block content %}
     {% endblock %}
 </body>
