@@ -5,24 +5,24 @@
 
     <td>
         <span class="buttons-container">
-        {% if editable %}
+            {% if editable %}
             <a
-                    href="#"
-                    hx-get="{{ url_for('answer_row_edit', answer_id=answer.id) }}"
-                    hx-trigger="click"
-                    title="Upravit"
+                href="#"
+                hx-get="{{ url_for('answer_row_edit', answer_id=answer.id) }}"
+                hx-trigger="click"
+                title="Upravit"
             >
                 <span class="fa fa-edit"></span>
             </a>
             <a
-                    href="#"
-                    hx-delete="{{ url_for('answer_row_delete', answer_id=answer.id) }}"
-                    hx-trigger="click"
-                    title="Smazat"
+                href="#"
+                hx-delete="{{ url_for('answer_row_delete', answer_id=answer.id) }}"
+                hx-trigger="click"
+                title="Smazat"
             >
                 <span class="fa fa-trash" style="color: red"></span>
             </a>
-        {% endif %}
+            {% endif %}
         </span>
     </td>
 </tr>

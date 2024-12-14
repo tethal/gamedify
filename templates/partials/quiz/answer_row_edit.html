@@ -1,30 +1,30 @@
 <tr class="answer_row_edit" hx-target="this" hx-swap="outerHTML">
     <td>
         <input
-                type="text"
-                name="answer_text"
-                value="{{ answer.text }}"
-                placeholder="{{ answer.text }}"
-                autofocus
-                onfocus="this.select();"
+            type="text"
+            name="answer_text"
+            value="{{ answer.text }}"
+            placeholder="{{ answer.text }}"
+            autofocus
+            onfocus="this.select();"
         />
     </td>
     <td class="buttons-column">
         <span class="buttons-container">
             <a
-                    href="#"
-                    hx-patch="{{ url_for('answer_row_patch', answer_id=answer.id) }}"
-                    hx-include="[name='answer_text']"
-                    hx-trigger="click, keyup[key=='Enter'] from:[name='answer_text']"
-                    title="Uložit"
+                href="#"
+                hx-patch="{{ url_for('answer_row_patch', answer_id=answer.id) }}"
+                hx-include="[name='answer_text']"
+                hx-trigger="click, keyup[key=='Enter'] from:[name='answer_text']"
+                title="Uložit"
             >
                 <span class="fa fa-check-square"></span>
             </a>
             <a
-                    href="#"
-                    hx-get="{{ url_for('answer_row_get', answer_id=answer.id) }}"
-                    hx-trigger="click, click from:.answer-list-row, keyup[key=='Escape'] from:[name='answer_text']"
-                    title="Zrušit"
+                href="#"
+                hx-get="{{ url_for('answer_row_get', answer_id=answer.id) }}"
+                hx-trigger="click, click from:.answer-list-row, keyup[key=='Escape'] from:[name='answer_text']"
+                title="Zrušit"
             >
                 <span class="fa fa-window-close" style="color: red;"></span>
             </a>

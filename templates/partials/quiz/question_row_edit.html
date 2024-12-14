@@ -1,34 +1,34 @@
 <tr class="question_row_edit{{ ' selected' if question == selected_question }}">
     <td>
         <input
-                type="text"
-                name="question_text"
-                value="{{ question.text }}"
-                placeholder="{{ question.text }}"
-                autofocus
-                onfocus="this.select();"
+            type="text"
+            name="question_text"
+            value="{{ question.text }}"
+            placeholder="{{ question.text }}"
+            autofocus
+            onfocus="this.select();"
         />
     </td>
     <td class="buttons-column">
         <span class="buttons-container">
             <a
-                    href="#"
-                    hx-patch="{{ url_for('question_row_patch', question_id=question.id) }}"
-                    hx-include="[name='question_text']"
-                    hx-trigger="click, keyup[key=='Enter'] from:[name='question_text']"
-                    hx-target=".quiz-questions"
-                    hx-swap="outerHTML"
-                    title="Uložit"
+                href="#"
+                hx-patch="{{ url_for('question_row_patch', question_id=question.id) }}"
+                hx-include="[name='question_text']"
+                hx-trigger="click, keyup[key=='Enter'] from:[name='question_text']"
+                hx-target=".quiz-questions"
+                hx-swap="outerHTML"
+                title="Uložit"
             >
                 <span class="fa fa-check-square"></span>
             </a>
             <a
-                    href="#"
-                    hx-get="{{ url_for('question_row_get', question_id=question.id) }}"
-                    hx-trigger="click, click from:.question-list-row, keyup[key=='Escape'] from:[name='question_text']"
-                    hx-target=".question_row_edit"
-                    hx-swap="outerHTML"
-                    title="Zrušit"
+                href="#"
+                hx-get="{{ url_for('question_row_get', question_id=question.id) }}"
+                hx-trigger="click, click from:.question-list-row, keyup[key=='Escape'] from:[name='question_text']"
+                hx-target=".question_row_edit"
+                hx-swap="outerHTML"
+                title="Zrušit"
             >
                 <span class="fa fa-window-close" style="color: red;"></span>
             </a>
