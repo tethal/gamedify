@@ -23,9 +23,10 @@
             </a>
             <a
                 href="#"
+                class="dismissable"
                 hx-get="{{ url_for('new_answer_row') }}"
                 hx-target=".new-answer-row-edit"
-                hx-trigger="click, click from:.answer-list-row, keyup[key=='Escape'] from:[name='answer_text']"
+                hx-trigger="click, dismiss-answer-edit, keyup[key=='Escape'] from:[name='answer_text']"
                 hx-swap="outerHTML"
                 title="Zrušit"
             >

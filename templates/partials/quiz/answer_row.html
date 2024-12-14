@@ -10,6 +10,7 @@
                 href="#"
                 hx-get="{{ url_for('answer_row_edit', answer_id=answer.id) }}"
                 hx-trigger="click"
+                hx-on:click="htmx.trigger('.dismissable', 'dismiss-answer-edit')"
                 title="Upravit"
             >
                 <span class="fa fa-edit"></span>

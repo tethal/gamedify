@@ -7,6 +7,7 @@
                 hx-trigger="click"
                 hx-target="closest tr" 
                 hx-swap="outerHTML"
+                hx-on:click="htmx.trigger('.dismissable', 'dismiss-quiz-edit')"
                 title="Přejmenovat"
             >
                     <span class="fa fa-edit"></span>
