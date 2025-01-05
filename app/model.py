@@ -5,6 +5,8 @@ from datetime import datetime
 from random import shuffle
 from typing import Optional
 
+from alembic.config import Config
+from alembic import command
 from sqlalchemy import Column, Enum, delete, text, update
 from sqlmodel import Field, Relationship, SQLModel, select
 from sqlmodel import Session
@@ -228,7 +230,11 @@ test_quiz = {
 
 
 def create_db(engine):
-    SQLModel.metadata.create_all(engine)
+    if not os.path.isfile("gamedify.db"):
+        SQLModel.metadata.create_all(engine)
+        command.stamp(Config("alembic.ini"), "head")
+    else:
+        command.upgrade(Config("alembic.ini"), "head")
     with engine.connect() as connection:
         connection.execute(text("PRAGMA foreign_keys=ON"))  # for SQLite only
     with Session(engine) as session:
