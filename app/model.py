@@ -1,7 +1,8 @@
+import unicodedata
 import enum
 import os
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 from random import shuffle
 from typing import Optional
 
@@ -108,6 +109,10 @@ class Game(SQLModel, table=True):
     player_on_turn_role: PlayerRole = Field(sa_column=Column(Enum(PlayerRole)))
     is_over: bool = False
     rows: int
+    last_question: str | None
+    last_answer: str | None
+    last_answer_time: datetime | None
+
 
     # entities
     room: Room = Relationship(back_populates="games")
@@ -141,6 +146,41 @@ class Game(SQLModel, table=True):
     def get_tile_by_index(self, index: int) -> Optional["Tile"]:
         return next((t for t in self.tiles if t.index == index), None)
 
+    @property
+    def show_last_answer(self) -> bool:
+        return self.last_question and self.last_answer_time and datetime.now() < self.last_answer_time + timedelta(seconds=30)
+
+    @property
+    def last_answer_text(self) -> str:
+        return self.last_answer if self.last_answer else "Nevím"
+
+    @property
+    def last_question_text(self) -> str:
+        return self.last_question.split('|')[0] if self.last_question else ''
+
+    @property
+    def last_question_correct_answers(self) -> list[str]:
+        return self.last_question.split('|')[1:] if self.last_question else []
+
+    @property
+    def is_last_answer_correct(self) -> bool:
+
+        def normalize(s: str) -> str:
+            return ''.join(
+                c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn').strip().lower()
+
+        if not self.last_question or not self.last_answer:
+            return False
+
+        answer = normalize(self.last_answer)
+        return any(normalize(a) == answer for a in self.last_question_correct_answers)
+
+    @property
+    def last_tile_winner(self) -> Player | None:
+        role = self.player_on_turn_role
+        if self.is_last_answer_correct:
+            role = role.swap()
+        return self.player_a if role == PlayerRole.A else self.player_b
 
 class TileState(enum.Enum):
     DEFAULT = "DEFAULT"

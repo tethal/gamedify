@@ -1,4 +1,3 @@
-import unicodedata
 import uuid
 from datetime import datetime, timedelta
 from random import shuffle
@@ -154,29 +153,23 @@ class ControllerImpl:
         if not tile or tile.state != TileState.DEFAULT:
             return
         tile.state = TileState.SELECTED
+        pc.game.last_answer = None
         self.db.add(tile)
+        self.db.add(pc.game)
         self.db.commit()
         self.event_bus.notify(pc.game.player_a_id)
         self.event_bus.notify(pc.game.player_b_id)
 
     def submit_answer(self, pc: PlayerConnection, answer: str | None):
 
-        def normalize(s: str) -> str:
-            return ''.join(
-                c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn').strip().lower()
-
         if not pc.game or pc.game.player_on_turn != pc.player or not pc.game.selected_tile:
             return
-        invalid = True
-        if answer:
-            answer = normalize(answer)
-            for a in pc.game.selected_tile.answers:
-                if normalize(a) == answer:
-                    invalid = False
-                    break
         tile = pc.game.selected_tile
+        pc.game.last_answer = answer
+        pc.game.last_answer_time = datetime.now()
+        pc.game.last_question = tile.question
         player_role = pc.game.player_on_turn_role
-        if invalid:
+        if not pc.game.is_last_answer_correct:
             player_role = player_role.swap()
         tile.state = TileState.from_role(player_role)
         if azk.is_winner_move(pc.game, tile):
@@ -188,6 +181,17 @@ class ControllerImpl:
         self.db.commit()
         self.event_bus.notify(pc.game.player_a_id)
         self.event_bus.notify(pc.game.player_b_id)
+
+    def type_answer(self, pc: PlayerConnection, answer: str | None):
+        if not pc.game or pc.game.player_on_turn != pc.player or not pc.game.selected_tile:
+            return
+        pc.game.last_answer = answer
+        self.db.add(pc.game)
+        self.db.commit()
+        if pc.game.player_on_turn_role == PlayerRole.A:
+            self.event_bus.notify(pc.game.player_b_id)
+        else:
+            self.event_bus.notify(pc.game.player_a_id)
 
     def start_new_game(self, pc: PlayerConnection):
         if not pc.game:
