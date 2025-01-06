@@ -90,6 +90,8 @@ class PlayerWsHandler(WsHandler):
             ctrl.submit_answer(pc, None)
         elif msg['action'] == 'start_new_game':
             ctrl.start_new_game(pc)
+        elif msg['action'] == 'type_answer':
+            ctrl.type_answer(pc, msg['answer'])
         else:
             print("RECEIVED:", msg)
 

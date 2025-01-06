@@ -10,7 +10,7 @@
             {% if game.is_over %}
             <span>Konec hry</span>
             {% elif on_turn %}
-            <span>Hraješ!</span> 
+            <span>Hraješ, vyber si políčko!</span>
             {% elif not on_turn and game.selected_tile %}
             <span>Soupeř odpovídá...</span>
             {% else %}
@@ -176,11 +176,42 @@
             <div class="game-question">{{ game.selected_tile.question_text }}</div>
             {% if on_turn %}
             <form class="answer" ws-send hx-vals='{"action": "submit_answer"}'>
-                <input class="answer-text" type="text" name="answer" placeholder="Odpověď" required/>
+                <input class="answer-text"
+                       type="text"
+                       name="answer"
+                       placeholder="Odpověď"
+                       required
+                       autocomplete="off"
+                       ws-send
+                       hx-vals='{"action": "type_answer"}'
+                       hx-trigger="keyup changed delay:500ms"
+                       hx-sync="this:replace"
+                />
                 <input class="answer-yes" type="submit" value="Odeslat"/>
                 <input class="answer-no" type="button" value="Nevím" ws-send hx-vals='{"action": "no_answer"}'/>
             </form>
+            {% elif game.last_answer %}
+            <div class="game-question">Soupeř píše: {{ game.last_answer }}</div>
             {% endif %}
+        </div>
+        {% elif game.show_last_answer %}
+        <div id="popup-last-answer" class="popup-question">
+            <div>Otázka: {{ game.last_question_text }}</div>
+            <div>Odpověď: {{ game.last_answer_text }}</div>
+            {% if game.is_last_answer_correct %}
+                <div>Správně</div>
+                <p>Políčko získává {{ game.last_tile_winner.name }}</p>
+            {% else %}
+                <div>Špatně</div>
+                <p>Políčko získává {{ game.last_tile_winner.name }}</p>
+                <p>Správná odpověď:</p>
+                <ul>
+                {% for a in game.last_question_correct_answers %}
+                    <li>{{ a }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+            <script>removeAfterDelay('#popup-last-answer', 5)</script>
         </div>
         {% endif %}
     </div>

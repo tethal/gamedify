@@ -14,3 +14,10 @@ function scrollToTop() {
         behavior: 'smooth'
     });
 }
+
+function removeAfterDelay(selector, seconds) {
+    let e = document.querySelector(selector);
+    setTimeout(() => {
+        e.remove();
+    }, seconds * 1000);
+}
