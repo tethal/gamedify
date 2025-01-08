@@ -1,0 +1,17 @@
+<div class="player-container">
+    <div class="player-a {{ 'on_turn' if game.player_on_turn_role == PlayerRole.A }}">
+        {{ game.player_a.name }}
+    </div>
+    {% if game.is_over %}
+    <span>Konec hry</span>
+    {% elif on_turn %}
+    <span>Hraješ, vyber si políčko!</span>
+    {% elif not on_turn and game.selected_tile %}
+    <span>{{ game.player_on_turn.name }} odpovídá...</span>
+    {% else %}
+    <span>Hraje {{ game.player_on_turn.name }}, čekej...</span>
+    {% endif %}
+    <div class="player-b {{ 'on_turn' if game.player_on_turn_role == PlayerRole.B }}">
+        {{ game.player_b.name }}
+    </div>
+</div>

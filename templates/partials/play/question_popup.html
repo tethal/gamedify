@@ -1,0 +1,23 @@
+<div class="popup-question">
+    <p class="game-question">{{ game.selected_tile.question_text }}</p>
+    {% if on_turn %}
+    <form class="answer" ws-send hx-vals='{"action": "submit_answer"}'>
+        <input class="answer-text"
+               type="text"
+               name="answer"
+               placeholder="Odpověď"
+               required
+               autocomplete="off"
+               ws-send
+               hx-vals='{"action": "type_answer"}'
+               hx-trigger="keyup changed delay:500ms"
+               hx-sync="this:replace"
+        />
+        <input class="answer-yes" type="submit" value="Odeslat"/>
+        <input class="answer-no" type="button" value="Nevím" ws-send hx-vals='{"action": "no_answer"}'/>
+    </form>
+    {% elif game.last_answer %}
+    <hr />
+    <p class="game-answer">{{ game.player_on_turn.name }} píše: <strong>{{ game.last_answer }}</strong></p>
+    {% endif %}
+</div>

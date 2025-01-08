@@ -129,6 +129,10 @@ class Game(SQLModel, table=True):
         return self.player_a if self.player_on_turn_role == PlayerRole.A else self.player_b
 
     @property
+    def last_player_on_turn(self) -> Player:
+        return self.player_b if self.player_on_turn_role == PlayerRole.A else self.player_a
+
+    @property
     def selected_tile(self) -> Optional["Tile"]:
         return next((t for t in self.tiles if t.state == TileState.SELECTED), None)
 
@@ -148,7 +152,7 @@ class Game(SQLModel, table=True):
 
     @property
     def show_last_answer(self) -> bool:
-        return self.last_question and self.last_answer_time and datetime.now() < self.last_answer_time + timedelta(seconds=30)
+        return self.last_question and self.last_answer_time and datetime.now() < self.last_answer_time + timedelta(seconds=6)
 
     @property
     def last_answer_text(self) -> str:

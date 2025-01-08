@@ -1,0 +1,9 @@
+<div class="popup-new-game">
+    {% if game.is_over %}
+    <p>Konec hry, vítězí {{ game.player_on_turn.name }}.</p>
+    <button ws-send hx-vals='{"action": "start_new_game"}'>Začít novou hru</button>
+    {% elif not game.is_player_active(opponent) %}
+    <p>{{ opponent.name }} je offline. Čekej, až se připojí, nebo můžeš začít novou hru s jiným hráčem.</p>
+    <button ws-send hx-vals='{"action": "start_new_game"}'>Začít novou hru</button>
+    {% endif %}
+</div>
