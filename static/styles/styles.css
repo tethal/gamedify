@@ -326,18 +326,51 @@ section.quiz-list {
     padding: 0 10px;
 }
 
-/* popup question */
-.popup-question {
+/* popup question, popup - last answer */
+.popup-question, .popup-last-answer {
     background: rgba(64, 64, 64, .9);
     border-radius: 0px;
     margin-top: 20px;
+    color: #cecece;
+}
+
+hr {
+    border: 1px solid rgba(206, 206, 206, .1);
+}
+
+.popup-question p, .popup-last-answer p {
+    text-align: center;
+    margin: 15px 0;
+}
+
+.popup-last-answer ul {
+    text-align: center;
+    margin: 15px 0;
+    list-style-type: none;
+}
+
+.popup-last-answer ul li {
+    display: inline;
+    margin: 0;
+}
+
+.correct-answer {
+    color: #b1ff9e;
+    font-size: 1.2rem;
+}
+
+.incorrect-answer {
+    color: #ffd7cb;
+    font-size: 1.2rem;
 }
 
 .game-question {
     color: #ececec;
-    text-align: center;
     font-size: 1.2rem;
-    margin: 15px 0;
+}
+
+.game-answer {
+    color: #9eecff;
 }
 
 form.answer {
@@ -377,7 +410,6 @@ form.answer input {
 .popup-new-game button {
     width: 150px;
 }
-
 
 /* quiz page */
 .quiz-questions {
@@ -653,6 +685,7 @@ nav svg {
     z-index: 9;
 }
 
+/* Media */
 @media only screen and (min-width: 576px) {
 
     html {
@@ -692,12 +725,21 @@ nav svg {
         font-size: 2.8rem;
         margin: 0;
     }
+    .popup-last-answer {
+        border-radius: 8px;
+        position: fixed;
+        top: 60%;
+        left: 50%;
+        translate: -50% -60%;
+        width: 700px;
+        z-index: 10;
+    }
     .popup-question {
         border-radius: 8px;
         position: fixed;
-        bottom: 20%;
+        top: 60%;
         left: 50%;
-        translate: -50% -20%;
+        translate: -50% -60%;
         width: 700px;
         z-index: 10;
     }
@@ -726,9 +768,9 @@ nav svg {
         border-radius: 0px;
         border-radius: 8px;
         position: fixed;
-        bottom: 30%;
+        top:80%;
         left: 50%;
-        translate: -50% -30%;
+        translate: -50% -80%;
         width: 700px;
         z-index: 10;
     }

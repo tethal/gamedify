@@ -3,23 +3,7 @@
 {% set on_turn = player == game.player_on_turn and game.is_player_active(opponent) and not game.is_over %}
 <div id="game-content">
     <div class="board-container">
-        <div class="player-container">
-            <div class="player-a {{ 'on_turn' if game.player_on_turn_role == PlayerRole.A }}">
-                {{ game.player_a.name }}
-            </div>
-            {% if game.is_over %}
-            <span>Konec hry</span>
-            {% elif on_turn %}
-            <span>Hraješ, vyber si políčko!</span>
-            {% elif not on_turn and game.selected_tile %}
-            <span>Soupeř odpovídá...</span>
-            {% else %}
-            <span>Hraje soupeř, čekej...</span>
-            {% endif %}
-            <div class="player-b {{ 'on_turn' if game.player_on_turn_role == PlayerRole.B }}">
-                {{ game.player_b.name }}
-            </div>
-        </div>
+        {% include 'partials/play/player_container.html' %}
 
         <div class="game-board">
             <svg viewBox="{{ game.board_view_box }}" onclick="event.preventDefault()">
@@ -161,58 +145,12 @@
             </svg>
         </div>
 
-        <div class="popup-new-game">
-            {% if game.is_over %}
-            <p>Konec hry, vítězí {{ game.player_on_turn.name }}.</p>
-            <button ws-send hx-vals='{"action": "start_new_game"}'>Začít novou hru</button>
-            {% elif not game.is_player_active(opponent) %}
-            <p>{{ opponent.name }} je offline. Čekej, až se připojí, nebo můžeš začít novou hru s jiným hráčem.</p>
-            <button ws-send hx-vals='{"action": "start_new_game"}'>Začít novou hru</button>
-            {% endif %}
-        </div>
+        {% include 'partials/play/new_game_popup.html' %}
 
         {% if game.selected_tile %}
-        <div class="popup-question">
-            <div class="game-question">{{ game.selected_tile.question_text }}</div>
-            {% if on_turn %}
-            <form class="answer" ws-send hx-vals='{"action": "submit_answer"}'>
-                <input class="answer-text"
-                       type="text"
-                       name="answer"
-                       placeholder="Odpověď"
-                       required
-                       autocomplete="off"
-                       ws-send
-                       hx-vals='{"action": "type_answer"}'
-                       hx-trigger="keyup changed delay:500ms"
-                       hx-sync="this:replace"
-                />
-                <input class="answer-yes" type="submit" value="Odeslat"/>
-                <input class="answer-no" type="button" value="Nevím" ws-send hx-vals='{"action": "no_answer"}'/>
-            </form>
-            {% elif game.last_answer %}
-            <div class="game-question">Soupeř píše: {{ game.last_answer }}</div>
-            {% endif %}
-        </div>
+            {% include 'partials/play/question_popup.html' %}
         {% elif game.show_last_answer %}
-        <div id="popup-last-answer" class="popup-question">
-            <div>Otázka: {{ game.last_question_text }}</div>
-            <div>Odpověď: {{ game.last_answer_text }}</div>
-            {% if game.is_last_answer_correct %}
-                <div>Správně</div>
-                <p>Políčko získává {{ game.last_tile_winner.name }}</p>
-            {% else %}
-                <div>Špatně</div>
-                <p>Políčko získává {{ game.last_tile_winner.name }}</p>
-                <p>Správná odpověď:</p>
-                <ul>
-                {% for a in game.last_question_correct_answers %}
-                    <li>{{ a }}</li>
-                {% endfor %}
-                </ul>
-            {% endif %}
-            <script>removeAfterDelay('#popup-last-answer', 5)</script>
-        </div>
+            {% include 'partials/play/last_answer_popup.html' %}
         {% endif %}
     </div>
 </div>

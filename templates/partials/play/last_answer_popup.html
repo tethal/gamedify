@@ -1,0 +1,20 @@
+<div class="popup-last-answer">
+    {% if game.last_player_on_turn == player %}
+        {% if game.last_tile_winner == player %}
+        <p class="correct-answer">Správná odpověď, políčko je tvé!</p>
+        {% else %}
+        <p class="incorrect-answer">Nesprávná odpověď, políčko získává {{ game.last_tile_winner.name }}.</p>
+        {% endif %}
+    {% else %}
+        {% if game.last_tile_winner == player %}
+        <p class="correct-answer">Nesprávná odpověď, políčko je tvé!</p>
+        {% else %}
+        <p class="incorrect-answer">Správná odpověď, políčko získává {{ game.last_tile_winner.name }}.</p>
+        {% endif %}
+    {% endif %}
+    {% if not game.is_last_answer_correct %}
+    <hr/>
+    <p>Správná odpověď: <strong>{{ game.last_question_correct_answers|join(', ') }}</strong></p>
+    {% endif %}
+    <script>removeAfterDelay('.popup-last-answer', 6)</script>
+</div>
